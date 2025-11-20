@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Game with Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f2f2;
+            padding: 50px;
+        }
+        .score {
+            font-size: 30px;
+            color: #333;
+            margin: 10px;
+        }
+        .button {
+            padding: 20px 40px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .button:active {
+            background-color: #45a049;
+        }
+        .button:focus {
+            outline: none;
+        }
+        .shop {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .shop-item {
+            margin: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            width: 220px;
+            min-height: 180px; /* Ensures all items are at least 180px tall */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Keeps items evenly spaced */
+            text-align: left;
+        }
+        .shop-item p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .shop-item button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .shop-item button:focus {
+            outline: none;
+        }
+
+        /* Corner info styles */
+        .corner-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* "Made By AD Game Studio" text in top-left */
+        .made-by {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 16px;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.8); /* Light background for contrast */
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 1000; /* Ensure it's on top of all other elements */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to the Clicker Game!</h1>
+    <div class="score">Total Points: <span id="score">0</span></div>
+
+    <button class="button" id="clickButton">Click Me!</button>
+
+    <div class="shop">
+        <h2>Shop</h2>
+        <!-- Shop items will be dynamically added here -->
+    </div>
+
+    <!-- Corner Info -->
+    <div class="corner-info">
+        <p><strong>Clicks per Click:</strong> <span id="clicksPerClick">1</span></p>
+        <p><strong>Auto Clicker per second:</strong> <span id="autoClickerPerSecond">0</span></p>
+    </div>
+
+    <!-- "Made By AD Game Studio" text in top-left corner -->
+    <div class="made-by">Made By AD Game Studio</div>
+
+    <script>
+        let score = 0;
+        let pointsPerClick = 1;
+        let autoClickerActive = false;
+        let autoClickerPointsPerSecond = 0;
+        let clickComboMultiplier = 1;
+
+        // Array of power-ups with updated prices
+        const powerUps = [
+            {
+                name: "Auto Clicker",
+                description: "+1 auto click per second",
+                cost: 75,
+                effect: () => {
+                    autoClickerActive = true;
+                    autoClickerPointsPerSecond += 1;
+                    // Update the auto clicker counter on the screen
+                    document.getElementById("autoClickerPerSecond").textContent = autoClickerPointsPerSecond;
+                    alert("Auto Clicker Activated!");
+                    increasePrice(0);
+                }
+            },
+            {
+                name: "Click Boost",
+                description: "+1 click per click",
+                cost: 100,
+                effect: () => {
+                    pointsPerClick += 1;
+                    // Update the clicks per click display in the corner
+                    document.getElementById("clicksPerClick").textContent = pointsPerClick;
+                    alert("Click Boost Activated!");
+                    increasePrice(1);
+                }
+            },
+            {
+                name: "Double Clicks",
+                description: "Double clicks per click for 10 seconds",
+                cost: 250,
+                effect: () => {
+                    pointsPerClick *= 2;
+                    // Update the clicks per click display in the corner
+                    document.getElementById("clicksPerClick").textContent = pointsPerClick;
+                    setTimeout(() => {
+                        pointsPerClick /= 2;
+                        // Update the clicks per click display after the duration ends
+                        document.getElementById("clicksPerClick").textContent = pointsPerClick;
+                        alert("Double Clicks has ended!");
+                    }, 10000);
+                    alert("Double Clicks Activated!");
+                    increasePrice(2);
+                }
+            },
+            {
+                name: "Auto Clicker Boost",
+                description: "Double the auto clicker per second for 10 seconds",
+                cost: 500,
+                effect: () => {
+                    autoClickerPointsPerSecond *= 2;
+                    // Update the auto clicker counter on the screen
+                    document.getElementById("autoClickerPerSecond").textContent = autoClickerPointsPerSecond;
+                    setTimeout(() => {
+                        autoClickerPointsPerSecond /= 2;
+                        // Update the auto clicker counter after the duration ends
+                        document.getElementById("autoClickerPerSecond").textContent = autoClickerPointsPerSecond;
+                        alert("Auto Clicker Boost has ended!");
+                    }, 10000);
+                    alert("Auto Clicker Boost Activated!");
+                    increasePrice(3);
+                }
+            },
+            {
+                name: "Time Warp",
+                description: "Multiply clicks by 2.5x for 10 seconds",
+                cost: 800,
+                effect: () => {
+                    pointsPerClick *= 2.5;
+                    // Update the clicks per click display in the corner
+                    document.getElementById("clicksPerClick").textContent = pointsPerClick;
+                    setTimeout(() => {
+                        pointsPerClick /= 2.5;
+                        // Update the clicks per click display after the duration ends
+                        document.getElementById("clicksPerClick").textContent = pointsPerClick;
+                        alert("Time Warp has ended!");
+                    }, 10000);
+                    alert("Time Warp Activated!");
+                    increasePrice(4);
+                }
+            },
+            {
+                name: "Click Multiplier",
+                description: "Increase total points by 1.5x for 10 seconds",
+                cost: 1200,
+                effect: () => {
+                    clickComboMultiplier = 1.5;
+                    setTimeout(() => {
+                        clickComboMultiplier = 1;
+                        alert("Click Multiplier has ended!");
+                    }, 10000);
+                    alert("Click Multiplier Activated!");
+                    increasePrice(5);
+                }
+            }
+        ];
+
+        const scoreDisplay = document.getElementById("score");
+        const clickButton = document.getElementById("clickButton");
+
+        // Dynamically create shop items based on the array
+        function createShopItems() {
+            const shopContainer = document.querySelector(".shop");
+
+            powerUps.forEach((powerUp, index) => {
+                const itemDiv = document.createElement("div");
+                itemDiv.classList.add("shop-item");
+
+                const itemName = document.createElement("p");
+                itemName.textContent = powerUp.name;
+
+                const itemDesc = document.createElement("p");
+                itemDesc.textContent = powerUp.description;
+
+                const itemCost = document.createElement("p");
+                itemCost.textContent = `Cost: ${powerUp.cost} Points`;
+
+                const buyButton = document.createElement("button");
+                buyButton.textContent = "Buy";
+                buyButton.addEventListener("click", () => {
+                    if (score >= powerUp.cost) {
+                        score -= powerUp.cost;
+                        scoreDisplay.textContent = score;
+                        powerUp.effect();
+                    } else {
+                        alert("Not enough points!");
+                    }
+                });
+
+                itemDiv.appendChild(itemName);
+                itemDiv.appendChild(itemDesc);
+                itemDiv.appendChild(itemCost);
+                itemDiv.appendChild(buyButton);
+
+                shopContainer.appendChild(itemDiv);
+            });
+        }
+
+        // Increase the price of the power-up after it has been bought by 10%
+        function increasePrice(index) {
+            powerUps[index].cost = Math.floor(powerUps[index].cost * 1.1); // Increase by 10%
+            const shopContainer = document.querySelector(".shop");
+            shopContainer.innerHTML = ''; // Clear the shop
+            createShopItems(); // Recreate the shop with updated prices
+        }
+
+        // Update the score
+        function updateScore() {
+            score += pointsPerClick * clickComboMultiplier;
+            scoreDisplay.textContent = score;
+        }
+
+        // Auto Clicker Function
+        function autoClick() {
+            if (autoClickerActive) {
+                score += autoClickerPointsPerSecond;
+                scoreDisplay.textContent = score;
+            }
+        }
+
+        // Click button event listener
+        clickButton.addEventListener("click", updateScore);
+
+        // Auto clicker loop
+        setInterval(autoClick, 1000);
+
+        // Initialize the shop with power-ups
+        createShopItems();
+
+    </script>
+</body>
+</html>

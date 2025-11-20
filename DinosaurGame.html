@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dinosaur Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #e0e0e0; /* Light grey background */
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+      background-color: #f0f0f0;
+    }
+    .score {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      color: #333;
+      font-weight: bold;
+      z-index: 10;
+    }
+    .highscore {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      color: #333;
+      font-weight: bold;
+      z-index: 10;
+    }
+    .credit {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-size: 18px;
+      color: #333;
+      font-weight: bold;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <div class="score" id="scoreDisplay">Score: 0</div>
+  <div class="highscore" id="highscoreDisplay">Highscore: 0</div>
+  <div class="credit">Made By AD Game Studio</div>
+  
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const dinoWidth = 40;
+    const dinoHeight = 60;
+    const cactusWidth = 30;
+    const cactusHeight = 50;
+
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
+
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+
+    // Dino properties
+    let dino = {
+      x: 50,
+      y: canvasHeight - dinoHeight - 20,
+      width: dinoWidth,
+      height: dinoHeight,
+      speedY: 0,
+      gravity: 1,
+      jumpPower: -15,
+      jumping: false,
+      canJump: true
+    };
+
+    // Cactus array
+    let cacti = [];
+
+    let gameSpeed = 5; // Starting speed of the cacti
+    const speedIncreaseInterval = 5000; // Increase speed every 5 seconds
+    let lastSpeedIncreaseTime = Date.now(); // Track the last time speed was increased
+    let lastJumpTime = 0; // Track the last time the dino jumped
+    const jumpCooldown = 300; // 300ms cooldown between jumps
+
+    // Score and Highscore
+    let score = 0;
+    let highscore = localStorage.getItem('highscore') ? parseInt(localStorage.getItem('highscore')) : 0; // Load highscore from localStorage
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const highscoreDisplay = document.getElementById('highscoreDisplay');
+    
+    // Variable to store the animation frame ID
+    let animationId; 
+
+    // Keydown event for jumping
+    document.addEventListener("keydown", function(event) {
+      if (event.code === "Space" && !dino.jumping && (Date.now() - lastJumpTime) > jumpCooldown) {
+        dino.speedY = dino.jumpPower;
+        dino.jumping = true;
+        dino.canJump = false; // Disable further jumps until cooldown is over
+        lastJumpTime = Date.now(); // Update last jump time
+      }
+    });
+
+    // Dino movement
+    function moveDino() {
+      dino.y += dino.speedY;
+      if (dino.y > canvasHeight - dinoHeight - 20) {
+        dino.y = canvasHeight - dinoHeight - 20;
+        dino.jumping = false;
+        dino.speedY = 0;
+        dino.canJump = true; // Enable jumping again
+      } else {
+        dino.speedY += dino.gravity;
+      }
+    }
+
+    // Create new cactus with better spacing
+    function createCactus() {
+      const lastCactus = cacti[cacti.length - 1];
+      const minDistance = 300; // Minimum distance between obstacles
+      const maxDistance = 600; // Maximum distance between obstacles
+      const distance = Math.random() * (maxDistance - minDistance) + minDistance;
+
+      const cactus = {
+        x: canvasWidth + distance,
+        y: canvasHeight - cactusHeight - 20,
+        width: cactusWidth,
+        height: cactusHeight,
+        speedX: gameSpeed
+      };
+      
+      // Make sure no cactus spawns too close to the previous one
+      if (!lastCactus || cactus.x - lastCactus.x > minDistance) {
+        cacti.push(cactus);
+      }
+    }
+
+    // Move cacti
+    function moveCacti() {
+      for (let i = 0; i < cacti.length; i++) {
+        cacti[i].x -= cacti[i].speedX;
+
+        // Remove cactus when off-screen
+        if (cacti[i].x + cactusWidth < 0) {
+          cacti.splice(i, 1);
+          i--;
+          score++; // Increase score when a cactus moves off-screen
+        }
+      }
+    }
+
+    // Collision detection
+    function detectCollision() {
+      for (let i = 0; i < cacti.length; i++) {
+        if (
+          dino.x + dino.width > cacti[i].x &&
+          dino.x < cacti[i].x + cacti[i].width &&
+          dino.y + dino.height > cacti[i].y
+        ) {
+          gameOver();
+          return; // Exit the detectCollision function immediately after game over
+        }
+      }
+    }
+
+    // Game over function
+    function gameOver() {
+      // Stop the current game loop immediately
+      cancelAnimationFrame(animationId); 
+
+      // Check if the score is higher than the highscore
+      if (score > highscore) {
+        highscore = score;
+        localStorage.setItem('highscore', highscore); // Save new highscore to localStorage
+      }
+      alert("Game Over! Final Score: " + score + ". Click OK to restart."); // Changed alert message
+      
+      // Call restart function which handles all resets and starts a NEW single loop
+      restartGame();
+    }
+
+    // Restart game function
+    function restartGame() {
+      // Reset game variables to initial state
+      cacti = [];
+      dino.y = canvasHeight - dinoHeight - 20;
+      dino.speedY = 0;
+      dino.jumping = false;
+      dino.canJump = true;
+      gameSpeed = 5; // Reset speed to starting value
+      score = 0; // Reset score
+      lastSpeedIncreaseTime = Date.now(); // Reset speed increase timer
+
+      // Update displays
+      scoreDisplay.textContent = 'Score: ' + score;
+      highscoreDisplay.textContent = 'Highscore: ' + highscore; 
+
+      // Start the game loop again with a fresh animation ID
+      animationId = requestAnimationFrame(update); 
+    }
+
+    // Draw the Dino
+    function drawDino() {
+      ctx.fillStyle = "#4CAF50"; // Dino body color
+      ctx.fillRect(dino.x, dino.y, dino.width, dino.height); // Body
+
+      ctx.fillStyle = "#388E3C"; // Dino legs color
+      ctx.fillRect(dino.x + 10, dino.y + 40, 10, 20); // Left leg
+      ctx.fillRect(dino.x + 20, dino.y + 40, 10, 20); // Right leg
+
+      ctx.fillStyle = "#2C6E2F"; // Dino tail color
+      ctx.fillRect(dino.x - 10, dino.y + 30, 10, 15); // Tail
+
+      // Draw black square eyes
+      drawEyes();
+    }
+
+    // Draw black square eyes
+    function drawEyes() {
+      ctx.fillStyle = "#000000"; // Black color for the eyes
+      ctx.fillRect(dino.x + 8, dino.y + 10, 8, 8); // Left eye
+      ctx.fillRect(dino.x + 24, dino.y + 10, 8, 8); // Right eye
+    }
+
+    // Draw Cacti with color variation (shades of green)
+    function drawCacti() {
+      for (let i = 0; i < cacti.length; i++) {
+        const cactus = cacti[i];
+        const randomGreen = `rgb(${Math.random() * 100 + 50}, ${Math.random() * 100 + 150}, ${Math.random() * 50 + 50})`;
+        ctx.fillStyle = randomGreen; // Random green shade for each cactus
+        ctx.fillRect(cactus.x, cactus.y, cactus.width, cactus.height);
+      }
+    }
+
+    // Update score display
+    function updateScore() {
+      scoreDisplay.textContent = 'Score: ' + score;
+      highscoreDisplay.textContent = 'Highscore: ' + highscore;
+    }
+
+    // Increase game speed
+    function increaseGameSpeed() {
+      if (Date.now() - lastSpeedIncreaseTime > speedIncreaseInterval) {
+        gameSpeed += 0.5; // Increase speed by 0.5 every 5 seconds
+        lastSpeedIncreaseTime = Date.now();
+      }
+    }
+
+    // Draw all elements
+    function draw() {
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      
+      // Draw Dino
+      drawDino();
+
+      // Draw Cacti
+      drawCacti();
+
+      // Update score and highscore display
+      updateScore();
+    }
+
+    // Update game state (the main game loop function)
+    function update() {
+      moveDino();
+      moveCacti();
+      detectCollision();
+      increaseGameSpeed(); // Increase speed as time passes
+      draw();
+
+      // Create new cactus every 2-3 seconds
+      if (Math.random() < 0.02) {
+        createCactus();
+      }
+
+      // Schedule the next frame and store its ID
+      animationId = requestAnimationFrame(update); 
+    }
+
+    // Start the game for the first time
+    animationId = requestAnimationFrame(update);
+  </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tetris Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #222;
+      height: 100vh;
+      flex-direction: row; /* Place canvas and preview side by side */
+    }
+    canvas {
+      border: 1px solid #fff;
+      background-color: #111;
+    }
+    .credits {
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+    .score, .high-score {
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      position: absolute;
+    }
+    .score {
+      top: 10px;
+      right: 10px;
+    }
+    .high-score {
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .pause-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .pause-text {
+      color: white;
+      font-size: 36px;
+      font-family: Arial, sans-serif;
+    }
+    /* Style for the preview box to the right of the canvas */
+    .preview-box {
+      margin-left: 20px;
+      padding: 10px;
+      border: 1px solid #fff;
+      width: 120px;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #333;
+      margin-top: -60px; /* Move the preview box higher */
+    }
+    .preview-box canvas {
+      border: none;
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="credits">Made By AD Game Studio</div>
+  <div class="score" id="score">Score: 0</div>
+  <div class="high-score" id="high-score">High Score: 0</div>
+  <canvas id="tetris" width="300" height="600"></canvas> <!-- Main Tetris Canvas -->
+  <div class="preview-box" id="preview-box">
+    <canvas id="preview" width="60" height="60"></canvas> <!-- Preview Canvas -->
+  </div>
+  <div class="pause-overlay" id="pause-overlay">
+    <div class="pause-text">Game Paused</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('tetris');
+    const ctx = canvas.getContext('2d');
+    const previewCanvas = document.getElementById('preview');
+    const previewCtx = previewCanvas.getContext('2d');
+
+    const ROWS = 20;
+    const COLUMNS = 10;
+    const BLOCK_SIZE = 30; // size of a block in pixels
+
+    const FALL_INTERVAL = 1000; // Time interval between falls (in ms)
+    let lastFallTime = 0; // Track the last time the tetromino fell
+
+    // Define the tetromino shapes and their possible rotations
+    const tetrominoes = [
+      { color: 'cyan', rotations: [
+        [[1, 1, 1, 1]], // I - 0 degrees
+        [[1], [1], [1], [1]], // I - 90 degrees
+      ] },
+      { color: 'blue', rotations: [
+        [[1, 1], [1, 1]], // O (only one rotation)
+      ] },
+      { color: 'orange', rotations: [
+        [[0, 1, 0], [1, 1, 1]], // T - 0 degrees
+        [[1, 0], [1, 1], [1, 0]], // T - 90 degrees
+        [[1, 1, 1], [0, 1, 0]], // T - 180 degrees
+        [[0, 1], [1, 1], [0, 1]], // T - 270 degrees
+      ] },
+      { color: 'green', rotations: [
+        [[1, 1, 0], [0, 1, 1]], // S - 0 degrees
+        [[0, 1], [1, 1], [1, 0]], // S - 90 degrees
+      ] },
+      { color: 'red', rotations: [
+        [[0, 1, 1], [1, 1, 0]], // Z - 0 degrees
+        [[1, 0], [1, 1], [0, 1]], // Z - 90 degrees
+      ] },
+      { color: 'purple', rotations: [
+        [[1, 0, 0], [1, 1, 1]], // J - 0 degrees
+        [[1, 1], [1, 0], [1, 0]], // J - 90 degrees
+        [[1, 1, 1], [0, 0, 1]], // J - 180 degrees
+        [[0, 1], [0, 1], [1, 1]], // J - 270 degrees
+      ] },
+      { color: 'yellow', rotations: [
+        [[0, 0, 1], [1, 1, 1]], // L - 0 degrees
+        [[1, 0], [1, 0], [1, 1]], // L - 90 degrees
+        [[1, 1, 1], [1, 0, 0]], // L - 180 degrees
+        [[1, 1], [0, 1], [0, 1]], // L - 270 degrees
+      ] }
+    ];
+
+    let board = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(null));
+    let currentTetromino = null;
+    let currentPos = { x: 0, y: 0 };
+    let currentRotation = 0; // Track the current rotation state
+    let nextTetromino = null; // Store the next tetromino
+    let score = 0; // Initialize score
+
+    // Load the high score from localStorage
+    let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
+    let paused = false; // Track if the game is paused
+    let gameLoopId = null; // To store the animation frame ID for cancellation
+
+    // Functions
+    function drawBoard() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the grid
+      for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLUMNS; col++) {
+          if (board[row][col]) {
+            ctx.fillStyle = board[row][col];
+            ctx.fillRect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.strokeStyle = 'white';
+            ctx.strokeRect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+          }
+        }
+      }
+    }
+
+    function drawTetromino() {
+      const shape = currentTetromino.rotations[currentRotation];
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            ctx.fillStyle = currentTetromino.color;
+            ctx.fillRect((currentPos.x + col) * BLOCK_SIZE, (currentPos.y + row) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.strokeStyle = 'white';
+            ctx.strokeRect((currentPos.x + col) * BLOCK_SIZE, (currentPos.y + row) * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+          }
+        }
+      }
+    }
+
+    function drawPreviewTetromino(tetromino) {
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height); // Clear the preview canvas
+
+      const shape = tetromino.rotations[0]; // Show the 0-degree rotation as the preview
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            previewCtx.fillStyle = tetromino.color;
+            previewCtx.fillRect(col * 15, row * 15, 15, 15); // 15x15 block size for preview
+            previewCtx.strokeStyle = 'white';
+            previewCtx.strokeRect(col * 15, row * 15, 15, 15);
+          }
+        }
+      }
+    }
+
+    function rotateTetromino() {
+      const nextRotation = (currentRotation + 1) % currentTetromino.rotations.length;
+      if (isValidMove(currentTetromino, currentPos.x, currentPos.y, nextRotation)) {
+        currentRotation = nextRotation;
+      }
+    }
+
+    function isValidMove(tetromino, x, y, rotation = currentRotation) {
+      const shape = tetromino.rotations[rotation];
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            if (
+              x + col < 0 ||
+              x + col >= COLUMNS ||
+              y + row >= ROWS ||
+              board[y + row] && board[y + row][x + col]
+            ) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+
+    function placeTetromino() {
+      const shape = currentTetromino.rotations[currentRotation];
+      for (let row = 0; row < shape.length; row++) {
+        for (let col = 0; col < shape[row].length; col++) {
+          if (shape[row][col]) {
+            board[currentPos.y + row][currentPos.x + col] = currentTetromino.color;
+          }
+        }
+      }
+    }
+
+    function clearLines() {
+      let linesCleared = 0;
+      for (let row = ROWS - 1; row >= 0; row--) {
+        if (board[row].every(cell => cell !== null)) {
+          // If the row is full, remove it and shift all rows above down
+          board.splice(row, 1);
+          board.unshift(Array(COLUMNS).fill(null)); // Add a new empty row at the top
+          row++; // Recheck this row since we've shifted everything down
+          linesCleared++;
+        }
+      }
+
+      // Update score based on how many lines are cleared
+      if (linesCleared === 1) {
+        score += 100;
+      } else if (linesCleared === 2) {
+        score += 300;
+      } else if (linesCleared === 3) {
+        score += 500;
+      } else if (linesCleared === 4) {
+        score += 800; // Tetris
+      }
+
+      // Update score display
+      document.getElementById('score').textContent = `Score: ${score}`;
+
+      // Check and update high score
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+        document.getElementById('high-score').textContent = `High Score: ${highScore}`;
+      }
+    }
+
+    function generateTetromino() {
+      const randomIndex = Math.floor(Math.random() * tetrominoes.length);
+      currentTetromino = nextTetromino || { ...tetrominoes[randomIndex] };
+      nextTetromino = { ...tetrominoes[Math.floor(Math.random() * tetrominoes.length)] };
+      currentRotation = 0; // reset rotation to default
+      currentPos = { x: Math.floor(COLUMNS / 2) - Math.floor(currentTetromino.rotations[0][0].length / 2), y: 0 };
+
+      // Show the next tetromino in the preview box
+      drawPreviewTetromino(nextTetromino);
+
+      if (!isValidMove(currentTetromino, currentPos.x, currentPos.y, currentRotation)) {
+        // Game over
+        alert('Game Over');
+        board = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(null));
+        score = 0; // Reset score
+        document.getElementById('score').textContent = `Score: ${score}`; // Update display
+      }
+    }
+
+    function moveTetrominoDown() {
+      if (isValidMove(currentTetromino, currentPos.x, currentPos.y + 1)) {
+        currentPos.y++;
+      } else {
+        placeTetromino();
+        clearLines();
+        generateTetromino();
+      }
+    }
+
+    function update() {
+      if (paused) return; // If the game is paused, do not update.
+
+      const now = Date.now();
+      
+      // Only move down if enough time has passed (based on FALL_INTERVAL)
+      if (now - lastFallTime >= FALL_INTERVAL) {
+        moveTetrominoDown();
+        lastFallTime = now;
+      }
+      
+      drawBoard();
+      drawTetromino();
+      
+      gameLoopId = requestAnimationFrame(update); // Store the animation frame ID for pausing
+    }
+
+    // Key event listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') {
+        if (isValidMove(currentTetromino, currentPos.x - 1, currentPos.y, currentRotation)) {
+          currentPos.x--;
+        }
+      } else if (e.key === 'ArrowRight') {
+        if (isValidMove(currentTetromino, currentPos.x + 1, currentPos.y, currentRotation)) {
+          currentPos.x++;
+        }
+      } else if (e.key === 'ArrowDown') {
+        moveTetrominoDown();
+      } else if (e.key === 'ArrowUp') {
+        rotateTetromino();
+      } else if (e.key === 'p' || e.key === 'P') {
+        // Toggle pause state
+        paused = !paused;
+        
+        // Toggle the visibility of the pause overlay
+        document.getElementById('pause-overlay').style.display = paused ? 'flex' : 'none';
+        
+        // If paused, stop the game loop (by not requesting animation frame)
+        if (paused) {
+          cancelAnimationFrame(gameLoopId);  // Stop the game loop
+        } else {
+          update();  // Restart the game loop
+        }
+      }
+    });
+
+    // Initialize game
+    generateTetromino();
+    update(); // Start the game loop
+  </script>
+
+</body>
+</html>
