@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request a Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body onload="requireLogin()">
+<div class="container">
+    <h2>Request a Game</h2>
+    <p>Submit your game ideas below:</p>
 
+    <input type="text" id="game-name" placeholder="Game Name" required>
+    <textarea id="game-description" placeholder="Describe your game idea..." rows="4" required></textarea>
+    <button onclick="submitRequest()">Submit Request</button>
+
+    <p id="msg" class="success-msg"></p>
+    <br>
+    <button onclick="logout()">Logout</button>
+</div>
+
+<script src="main.js"></script>
+<script>
+function submitRequest() {
+    const name = document.getElementById('game-name').value;
+    const desc = document.getElementById('game-description').value;
+
+    if(!name || !desc){
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    fetch(API_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            action: "requestGame",
+            username: localStorage.getItem("loggedInUser"),
+            gameName: name,
+            gameDescription: desc
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            document.getElementById('msg').innerText = "Request submitted! Thank you.";
+            document.getElementById('game-name').value = '';
+            document.getElementById('game-description').value = '';
+        } else {
+            document.getElementById('msg').innerText = "Failed to submit request: " + data.message;
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('msg').innerText = "Error submitting request.";
+    });
+}
+</script>
+</body>
+</html>
