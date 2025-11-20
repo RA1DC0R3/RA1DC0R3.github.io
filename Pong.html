@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pong</title>
+<style>
+    body {
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        position: relative; /* To position the text relative to the body */
+    }
+
+    canvas {
+        border: 2px solid white;
+    }
+
+    /* Styling for the credit text */
+    .game-credit {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5); /* Optional background to make text readable */
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Credit text in top left -->
+<div class="game-credit">Made By AD Game Studio</div>
+
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let paddleHeight = 100;
+let paddleWidth = 15;
+
+let leftPaddle = { x: 20, y: canvas.height / 2 - paddleHeight / 2, speed: 6 };
+let rightPaddle = { x: canvas.width - 35, y: canvas.height / 2 - paddleHeight / 2, speed: 6 };
+
+let ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    size: 12,
+    speedX: 5,
+    speedY: 5
+};
+
+let keys = {};
+let leftScore = 0;
+let rightScore = 0;
+
+// Input handlers
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => keys[e.key] = false);
+
+// Movement function
+function movePaddles() {
+    // Left paddle (W/S)
+    if (keys["w"] && leftPaddle.y > 0) leftPaddle.y -= leftPaddle.speed;
+    if (keys["s"] && leftPaddle.y < canvas.height - paddleHeight) leftPaddle.y += leftPaddle.speed;
+
+    // Right paddle (Up/Down)
+    if (keys["ArrowUp"] && rightPaddle.y > 0) rightPaddle.y -= rightPaddle.speed;
+    if (keys["ArrowDown"] && rightPaddle.y < canvas.height - paddleHeight) rightPaddle.y += rightPaddle.speed;
+}
+
+// Ball movement + collisions
+function moveBall() {
+    ball.x += ball.speedX;
+    ball.y += ball.speedY;
+
+    // Collide with top/bottom
+    if (ball.y <= 0 || ball.y + ball.size >= canvas.height) {
+        ball.speedY *= -1;
+    }
+
+    // Collide with paddles
+    if (
+        ball.x <= leftPaddle.x + paddleWidth &&
+        ball.y + ball.size >= leftPaddle.y &&
+        ball.y <= leftPaddle.y + paddleHeight
+    ) {
+        ball.speedX *= -1;
+    }
+
+    if (
+        ball.x + ball.size >= rightPaddle.x &&
+        ball.y + ball.size >= rightPaddle.y &&
+        ball.y <= rightPaddle.y + paddleHeight
+    ) {
+        ball.speedX *= -1;
+    }
+
+    // Update score and reset ball if it goes off screen
+    if (ball.x < 0) {
+        rightScore++;
+        resetBall();
+    } else if (ball.x > canvas.width) {
+        leftScore++;
+        resetBall();
+    }
+}
+
+// Reset ball to center
+function resetBall() {
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+    ball.speedX *= -1;
+}
+
+// Draw everything
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Middle line
+    ctx.fillStyle = "white";
+    ctx.fillRect(canvas.width / 2 - 2, 0, 4, canvas.height);
+
+    // Paddles
+    ctx.fillRect(leftPaddle.x, leftPaddle.y, paddleWidth, paddleHeight);
+    ctx.fillRect(rightPaddle.x, rightPaddle.y, paddleWidth, paddleHeight);
+
+    // Ball
+    ctx.fillRect(ball.x, ball.y, ball.size, ball.size);
+
+    // Score
+    ctx.font = "30px Arial";
+    ctx.fillText(leftScore, canvas.width / 4, 50);
+    ctx.fillText(rightScore, 3 * canvas.width / 4, 50);
+}
+
+function gameLoop() {
+    movePaddles();
+    moveBall();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+</script>
+
+</body>
+</html>
