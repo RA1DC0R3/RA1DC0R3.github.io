@@ -2,27 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Downloads</title>
+<title>Download Games</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body onload="requireLogin()">
-<div class="container">
-    <h2>Downloads</h2>
-    <p>Welcome, <span id="user-name"></span>!</p>
+<body>
+<h1>Download Games</h1>
+<ul>
+    <li><button onclick="downloadFile('ClickerGame.html')">Clicker Game</button></li>
+    <li><button onclick="downloadFile('DinosaurGame.html')">Dinosaur Game</button></li>
+    <li><button onclick="downloadFile('FlappyBird.html')">Flappy Bird</button></li>
+    <li><button onclick="downloadFile('Pong.html')">Pong</button></li>
+    <li><button onclick="downloadFile('TetrisAD.html')">TetrisAD</button></li>
+</ul>
+<button onclick="window.location.href='homepage.html'">Back to Homepage</button>
 
-    <button onclick="downloadFile('ClickerGame.html')">Download Clicker Game</button>
-    <button onclick="downloadFile('DinosaurGame.html')">Download Dinosaur Game</button>
-    <button onclick="downloadFile('FlappyBird.html')">Download Flappy Bird</button>
-    <button onclick="downloadFile('Pong.html')">Download Pong</button>
-    <button onclick="downloadFile('TetrisAD.html')">Download Tetris AD</button>
-
-    <br><br>
-    <button onclick="logout()">Logout</button>
-</div>
 <script src="main.js"></script>
-<script>
-document.getElementById('user-name').innerText = localStorage.getItem('loggedInUser');
-</script>
 </body>
 </html>
