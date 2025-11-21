@@ -16,7 +16,7 @@ async function login() {
         const data = await response.json();
         if (data.success) {
             alert("Login successful!");
-            window.location.href = "homepage.html"; // Redirect to homepage
+            window.location.href = "homepage.html"; // Redirect to homepage/dashboard
         } else {
             alert("Login failed: " + data.message);
         }
@@ -41,7 +41,7 @@ async function signup() {
         const data = await response.json();
         if (data.success) {
             alert("Account created! You can now log in.");
-            window.location.href = "index.html";
+            window.location.href = "index.html"; // Redirect to login page
         } else {
             alert("Signup failed: " + data.message);
         }
