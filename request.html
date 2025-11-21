@@ -7,11 +7,15 @@
 </head>
 <body>
 <h1>Request a Game</h1>
-<input type="text" id="requesterName" placeholder="Your Name"><br>
-<textarea id="gameRequest" placeholder="Game Request"></textarea><br>
-<button onclick="submitRequest()">Submit Request</button><br>
-<button onclick="window.location.href='homepage.html'">Back to Homepage</button>
 
-<script src="main.js"></script>
+<p>Click the button below to submit your game request:</p>
+
+<!-- Redirect Button -->
+<button onclick="window.open('https://forms.gle/abcd1234', '_blank')">
+    Submit Request
+</button>
+
+<br><br>
+<button onclick="window.location.href='homepage.html'">Back to Homepage</button>
 </body>
 </html>
