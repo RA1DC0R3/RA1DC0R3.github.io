@@ -13,14 +13,16 @@ function signup() {
     }
 
     if (users[username]) {
-        alert("Username already exists.");
+        alert("Username already exists. Choose another.");
         return;
     }
 
+    // Add new user to users object and save
     users[username] = password;
     localStorage.setItem("users", JSON.stringify(users));
+
     alert("Account created! You can now log in.");
-    window.location.href = "index.html";
+    window.location.href = "index.html"; // Redirect to login page
 }
 
 // ====== LOGIN ======
@@ -34,9 +36,9 @@ function login() {
     }
 
     if (users[username] && users[username] === password) {
-        localStorage.setItem("currentUser", username);
+        localStorage.setItem("currentUser", username); // Track logged-in user
         alert("Login successful!");
-        window.location.href = "homepage.html";
+        window.location.href = "homepage.html"; // Redirect to homepage
     } else {
         alert("Invalid username or password");
     }
@@ -44,25 +46,27 @@ function login() {
 
 // ====== LOGOUT ======
 function logout() {
-    localStorage.removeItem("currentUser");
+    localStorage.removeItem("currentUser"); // Remove logged-in user
     window.location.href = "index.html";
 }
 
-// ====== DOWNLOAD FILE ======
+// ====== DOWNLOAD FILE USING BLOB ======
 function downloadFile(filename) {
     fetch(filename)
         .then(response => {
             if (!response.ok) throw new Error("File not found");
-            return response.blob();
+            return response.text(); // Get the file content as text
         })
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
+        .then(content => {
+            const blob = new Blob([content], { type: "text/html" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
             a.href = url;
             a.download = filename;
             document.body.appendChild(a);
             a.click();
             a.remove();
+            URL.revokeObjectURL(url); // Clean up memory
         })
         .catch(err => {
             console.error(err);
