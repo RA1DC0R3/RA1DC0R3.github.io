@@ -1,5 +1,5 @@
 // ====== Your Apps Script /exec URL ======
-const API_URL = "https://script.google.com/macros/s/AKfycbwo11wVvKNGNrycGdd162U73ffRz0ysbBJiM7kTacMH9Qitkvk0PJQDtewsCT2LfJ__/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzrdbVgXqrUD0oCyhsjgekou_qHjzzoydEBQ8viGvmmETFbV5LPwJJEKjtA8rfYkPGF/exec";
 
 // ====== LOGIN FUNCTION ======
 async function login() {
