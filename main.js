@@ -1,5 +1,5 @@
 // === CONFIG ===
-const API_URL = "https://script.google.com/macros/s/1cgZKiS7iFfT-Thk3TTfRMe7i8CxexbkAnY0GKF5mFEQ6N-NB-S8m1sTi/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz2gbSeHg4-U0YbLWkukPYu1WKgzC8GW3Sf0-xL8f_rceRNLAdeEdBg2HdF_b83HTtr/exec";
 
 // === SIGNUP ===
 async function signup() {
