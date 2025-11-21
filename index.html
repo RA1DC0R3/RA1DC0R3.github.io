@@ -2,19 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-    <h2>Login</h2>
-    <input type="text" id="login-username" placeholder="Username" required>
-    <input type="password" id="login-password" placeholder="Password" required>
-    <button onclick="login()">Login</button>
-    <p id="msg" class="error-msg"></p>
-    <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
-</div>
+<h1>Login</h1>
+
+<!-- Login Inputs -->
+<input type="text" id="username" placeholder="Username"><br>
+<input type="password" id="password" placeholder="Password"><br>
+
+<!-- Login Button -->
+<button id="loginBtn">Login</button>
+
+<p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+
+<!-- Script -->
 <script src="main.js"></script>
+<script>
+    // Add click listener to login button
+    document.getElementById("loginBtn").addEventListener("click", login);
+</script>
 </body>
 </html>
