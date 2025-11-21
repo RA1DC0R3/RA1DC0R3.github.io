@@ -101,62 +101,56 @@
     const BLOCK_SIZE = 30; // size of a block in pixels
 
     const FALL_INTERVAL = 1000; // Time interval between falls (in ms)
-    let lastFallTime = 0; // Track the last time the tetromino fell
+    let lastFallTime = 0;
 
-    // Define the tetromino shapes and their possible rotations
     const tetrominoes = [
       { color: 'cyan', rotations: [
-        [[1, 1, 1, 1]], // I - 0 degrees
-        [[1], [1], [1], [1]], // I - 90 degrees
+        [[1, 1, 1, 1]],
+        [[1], [1], [1], [1]],
       ] },
       { color: 'blue', rotations: [
-        [[1, 1], [1, 1]], // O (only one rotation)
+        [[1, 1], [1, 1]],
       ] },
       { color: 'orange', rotations: [
-        [[0, 1, 0], [1, 1, 1]], // T - 0 degrees
-        [[1, 0], [1, 1], [1, 0]], // T - 90 degrees
-        [[1, 1, 1], [0, 1, 0]], // T - 180 degrees
-        [[0, 1], [1, 1], [0, 1]], // T - 270 degrees
+        [[0, 1, 0], [1, 1, 1]],
+        [[1, 0], [1, 1], [1, 0]],
+        [[1, 1, 1], [0, 1, 0]],
+        [[0, 1], [1, 1], [0, 1]],
       ] },
       { color: 'green', rotations: [
-        [[1, 1, 0], [0, 1, 1]], // S - 0 degrees
-        [[0, 1], [1, 1], [1, 0]], // S - 90 degrees
+        [[1, 1, 0], [0, 1, 1]],
+        [[0, 1], [1, 1], [1, 0]],
       ] },
       { color: 'red', rotations: [
-        [[0, 1, 1], [1, 1, 0]], // Z - 0 degrees
-        [[1, 0], [1, 1], [0, 1]], // Z - 90 degrees
+        [[0, 1, 1], [1, 1, 0]],
+        [[1, 0], [1, 1], [0, 1]],
       ] },
       { color: 'purple', rotations: [
-        [[1, 0, 0], [1, 1, 1]], // J - 0 degrees
-        [[1, 1], [1, 0], [1, 0]], // J - 90 degrees
-        [[1, 1, 1], [0, 0, 1]], // J - 180 degrees
-        [[0, 1], [0, 1], [1, 1]], // J - 270 degrees
+        [[1, 0, 0], [1, 1, 1]],
+        [[1, 1], [1, 0], [1, 0]],
+        [[1, 1, 1], [0, 0, 1]],
+        [[0, 1], [0, 1], [1, 1]],
       ] },
       { color: 'yellow', rotations: [
-        [[0, 0, 1], [1, 1, 1]], // L - 0 degrees
-        [[1, 0], [1, 0], [1, 1]], // L - 90 degrees
-        [[1, 1, 1], [1, 0, 0]], // L - 180 degrees
-        [[1, 1], [0, 1], [0, 1]], // L - 270 degrees
+        [[0, 0, 1], [1, 1, 1]],
+        [[1, 0], [1, 0], [1, 1]],
+        [[1, 1, 1], [1, 0, 0]],
+        [[1, 1], [0, 1], [0, 1]],
       ] }
     ];
 
     let board = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(null));
     let currentTetromino = null;
     let currentPos = { x: 0, y: 0 };
-    let currentRotation = 0; // Track the current rotation state
-    let nextTetromino = null; // Store the next tetromino
-    let score = 0; // Initialize score
-
-    // Load the high score from localStorage
+    let currentRotation = 0;
+    let nextTetromino = null;
+    let score = 0;
     let highScore = localStorage.getItem('highScore') ? parseInt(localStorage.getItem('highScore')) : 0;
-    let paused = false; // Track if the game is paused
-    let gameLoopId = null; // To store the animation frame ID for cancellation
+    let paused = false;
+    let gameLoopId = null;
 
-    // Functions
     function drawBoard() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw the grid
       for (let row = 0; row < ROWS; row++) {
         for (let col = 0; col < COLUMNS; col++) {
           if (board[row][col]) {
@@ -184,14 +178,13 @@
     }
 
     function drawPreviewTetromino(tetromino) {
-      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height); // Clear the preview canvas
-
-      const shape = tetromino.rotations[0]; // Show the 0-degree rotation as the preview
+      previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      const shape = tetromino.rotations[0];
       for (let row = 0; row < shape.length; row++) {
         for (let col = 0; col < shape[row].length; col++) {
           if (shape[row][col]) {
             previewCtx.fillStyle = tetromino.color;
-            previewCtx.fillRect(col * 15, row * 15, 15, 15); // 15x15 block size for preview
+            previewCtx.fillRect(col * 15, row * 15, 15, 15);
             previewCtx.strokeStyle = 'white';
             previewCtx.strokeRect(col * 15, row * 15, 15, 15);
           }
@@ -240,29 +233,21 @@
       let linesCleared = 0;
       for (let row = ROWS - 1; row >= 0; row--) {
         if (board[row].every(cell => cell !== null)) {
-          // If the row is full, remove it and shift all rows above down
           board.splice(row, 1);
-          board.unshift(Array(COLUMNS).fill(null)); // Add a new empty row at the top
-          row++; // Recheck this row since we've shifted everything down
+          board.unshift(Array(COLUMNS).fill(null));
+          row++;
           linesCleared++;
         }
       }
 
-      // Update score based on how many lines are cleared
-      if (linesCleared === 1) {
-        score += 100;
-      } else if (linesCleared === 2) {
-        score += 300;
-      } else if (linesCleared === 3) {
-        score += 500;
-      } else if (linesCleared === 4) {
-        score += 800; // Tetris
+      // Score multiplier: n lines cleared = baseScore * n * n
+      if (linesCleared > 0) {
+        const baseScore = 100;
+        score += baseScore * linesCleared * linesCleared;
       }
 
-      // Update score display
       document.getElementById('score').textContent = `Score: ${score}`;
 
-      // Check and update high score
       if (score > highScore) {
         highScore = score;
         localStorage.setItem('highScore', highScore);
@@ -274,18 +259,16 @@
       const randomIndex = Math.floor(Math.random() * tetrominoes.length);
       currentTetromino = nextTetromino || { ...tetrominoes[randomIndex] };
       nextTetromino = { ...tetrominoes[Math.floor(Math.random() * tetrominoes.length)] };
-      currentRotation = 0; // reset rotation to default
+      currentRotation = 0;
       currentPos = { x: Math.floor(COLUMNS / 2) - Math.floor(currentTetromino.rotations[0][0].length / 2), y: 0 };
 
-      // Show the next tetromino in the preview box
       drawPreviewTetromino(nextTetromino);
 
       if (!isValidMove(currentTetromino, currentPos.x, currentPos.y, currentRotation)) {
-        // Game over
         alert('Game Over');
         board = Array.from({ length: ROWS }, () => Array(COLUMNS).fill(null));
-        score = 0; // Reset score
-        document.getElementById('score').textContent = `Score: ${score}`; // Update display
+        score = 0;
+        document.getElementById('score').textContent = `Score: ${score}`;
       }
     }
 
@@ -300,55 +283,41 @@
     }
 
     function update() {
-      if (paused) return; // If the game is paused, do not update.
+      if (paused) return;
 
       const now = Date.now();
-      
-      // Only move down if enough time has passed (based on FALL_INTERVAL)
       if (now - lastFallTime >= FALL_INTERVAL) {
         moveTetrominoDown();
         lastFallTime = now;
       }
-      
+
       drawBoard();
       drawTetromino();
-      
-      gameLoopId = requestAnimationFrame(update); // Store the animation frame ID for pausing
+      gameLoopId = requestAnimationFrame(update);
     }
 
-    // Key event listeners
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
-        if (isValidMove(currentTetromino, currentPos.x - 1, currentPos.y, currentRotation)) {
-          currentPos.x--;
-        }
+        if (isValidMove(currentTetromino, currentPos.x - 1, currentPos.y, currentRotation)) currentPos.x--;
       } else if (e.key === 'ArrowRight') {
-        if (isValidMove(currentTetromino, currentPos.x + 1, currentPos.y, currentRotation)) {
-          currentPos.x++;
-        }
+        if (isValidMove(currentTetromino, currentPos.x + 1, currentPos.y, currentRotation)) currentPos.x++;
       } else if (e.key === 'ArrowDown') {
         moveTetrominoDown();
       } else if (e.key === 'ArrowUp') {
         rotateTetromino();
       } else if (e.key === 'p' || e.key === 'P') {
-        // Toggle pause state
         paused = !paused;
-        
-        // Toggle the visibility of the pause overlay
         document.getElementById('pause-overlay').style.display = paused ? 'flex' : 'none';
-        
-        // If paused, stop the game loop (by not requesting animation frame)
         if (paused) {
-          cancelAnimationFrame(gameLoopId);  // Stop the game loop
+          cancelAnimationFrame(gameLoopId);
         } else {
-          update();  // Restart the game loop
+          update();
         }
       }
     });
 
-    // Initialize game
     generateTetromino();
-    update(); // Start the game loop
+    update();
   </script>
 
 </body>
