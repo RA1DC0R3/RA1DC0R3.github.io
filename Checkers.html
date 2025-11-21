@@ -3,15 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkers - Softlock Fixed</title>
+<title>Checkers</title>
 <style>
   body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background: #f0f0f0;
     font-family: sans-serif;
+  }
+  #info {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
   }
   #board {
     display: grid;
@@ -54,14 +60,20 @@
 </style>
 </head>
 <body>
+
+<div id="info">Current Player: <span id="player">Red</span> | Turn: <span id="turn">1</span></div>
 <div id="board"></div>
 
 <script>
 const board = document.getElementById('board');
+const playerDisplay = document.getElementById('player');
+const turnDisplay = document.getElementById('turn');
+
 let selectedPiece = null;
 let currentPlayer = 'red';
 let highlightedCells = [];
-let mustContinue = false; // Only piece that just captured can move
+let mustContinue = false;
+let turn = 1;
 
 let cells = [];
 for (let row = 0; row < 8; row++) {
@@ -97,7 +109,6 @@ function promoteToKing(piece) {
   piece.classList.add('triangle');
 }
 
-// Highlight moves/captures
 function highlightMoves(cell) {
   clearHighlights();
   const piece = cell.querySelector('.piece');
@@ -105,7 +116,6 @@ function highlightMoves(cell) {
   const row = parseInt(cell.dataset.row);
   const col = parseInt(cell.dataset.col);
 
-  // Determine directions
   let directions = [[-1,-1],[-1,1],[1,-1],[1,1]];
   if (!piece.classList.contains('triangle')) {
     directions = piece.classList.contains('red') ? [[-1,-1],[-1,1]] : [[1,-1],[1,1]];
@@ -117,13 +127,11 @@ function highlightMoves(cell) {
     let r = row + dr;
     let c = col + dc;
 
-    // Normal move
     if(r>=0 && r<8 && c>=0 && c<8 && !cells[r][c].querySelector('.piece') && !mustCapture){
       cells[r][c].classList.add('highlight-move');
       highlightedCells.push(cells[r][c]);
     }
 
-    // Capture move
     const midR = row + dr;
     const midC = col + dc;
     const endR = row + dr*2;
@@ -136,7 +144,6 @@ function highlightMoves(cell) {
       }
     }
 
-    // Flying king moves
     if(piece.classList.contains('triangle')){
       r = row + dr; c = col + dc;
       let captured=false;
@@ -163,7 +170,6 @@ function clearHighlights() {
   highlightedCells = [];
 }
 
-// Handle click
 function onCellClick(row,col){
   const cell = cells[row][col];
   const piece = cell.querySelector('.piece');
@@ -177,11 +183,9 @@ function onCellClick(row,col){
       cell.appendChild(movingPiece);
       movingPiece.classList.remove('selected');
 
-      // Promote to king
       if((movingPiece.classList.contains('red') && row===0) || (movingPiece.classList.contains('black-piece') && row===7))
         promoteToKing(movingPiece);
 
-      // Check if piece can capture again
       const moreCaptures = getPossibleCaptures(cell);
       if(capturedPieces.length>0 && moreCaptures.length>0){
         mustContinue=true;
@@ -191,10 +195,11 @@ function onCellClick(row,col){
         return;
       }
 
-      // End turn
       mustContinue=false;
       selectedPiece=null;
       currentPlayer = currentPlayer==='red'?'black-piece':'red';
+      turn++;
+      updateDisplay();
       clearHighlights();
     } else {
       selectedPiece.piece.classList.remove('selected');
@@ -202,14 +207,13 @@ function onCellClick(row,col){
       clearHighlights();
     }
   } else if(piece && piece.classList.contains(currentPlayer) && (!mustContinue || selectedPiece===null)){
-    if(mustContinue && selectedPiece && piece!==selectedPiece.piece) return; // only piece that captured can move
+    if(mustContinue && selectedPiece && piece!==selectedPiece.piece) return;
     selectedPiece={piece, cell};
     piece.classList.add('selected');
     highlightMoves(cell);
   }
 }
 
-// Capture logic
 function getCapturedPieces(fromCell, toCell){
   const fromRow=parseInt(fromCell.dataset.row);
   const fromCol=parseInt(fromCell.dataset.col);
@@ -238,7 +242,6 @@ function getCapturedPieces(fromCell, toCell){
   return captured;
 }
 
-// Get possible captures
 function getPossibleCaptures(cell){
   const row=parseInt(cell.dataset.row);
   const col=parseInt(cell.dataset.col);
@@ -273,7 +276,6 @@ function getPossibleCaptures(cell){
   return captures;
 }
 
-// Check if any captures available for player
 function playerHasCaptures(){
   for(let r=0;r<8;r++){
     for(let c=0;c<8;c++){
@@ -285,6 +287,13 @@ function playerHasCaptures(){
   }
   return false;
 }
+
+function updateDisplay(){
+  playerDisplay.textContent = currentPlayer==='red'?'Red':'Black';
+  turnDisplay.textContent = turn;
+}
+
+updateDisplay();
 </script>
 </body>
 </html>
