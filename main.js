@@ -39,3 +39,21 @@ function submitRequest() {
     document.getElementById("requesterName").value = "";
     document.getElementById("gameRequest").value = "";
 }
+
+// ====== Submit Bug Report ======
+function submitReport() {
+    const name = document.getElementById("reporterName").value.trim();
+    const reportText = document.getElementById("gameReport").value.trim();
+
+    if (!name || !reportText) {
+        alert("Please enter both your name and a bug report");
+        return;
+    }
+
+    requests.push({ name, report: reportText, timestamp: new Date().toISOString() });
+    localStorage.setItem("reports", JSON.stringify(requests));
+
+    alert("Report submitted successfully!");
+    document.getElementById("reporterName").value = "";
+    document.getElementById("gameReport").value = "";
+}
