@@ -2,26 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
+<title>Sign Up</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Login</h1>
+<h1>Sign Up</h1>
 
-<!-- Login Inputs -->
-<input type="text" id="username" placeholder="Username"><br>
-<input type="password" id="password" placeholder="Password"><br>
+<!-- Signup Inputs -->
+<input type="text" id="newUsername" placeholder="Username"><br>
+<input type="password" id="newPassword" placeholder="Password"><br>
 
-<!-- Login Button -->
-<button id="loginBtn">Login</button>
+<!-- Signup Button -->
+<button id="signupBtn">Sign Up</button>
 
-<p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+<p>Already have an account? <a href="index.html">Login</a></p>
 
 <!-- Script -->
 <script src="main.js"></script>
 <script>
-    // Add click listener to login button
-    document.getElementById("loginBtn").addEventListener("click", login);
+    // Add click listener to signup button
+    document.getElementById("signupBtn").addEventListener("click", signup);
 </script>
 </body>
 </html>
