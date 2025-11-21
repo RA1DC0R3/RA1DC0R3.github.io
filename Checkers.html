@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkers with Triangle Kings</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f0f0f0;
+    font-family: sans-serif;
+  }
+  #board {
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+    gap: 0;
+    border: 2px solid #333;
+  }
+  .cell {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .black {
+    background-color: #769656;
+  }
+  .white {
+    background-color: #eeeed2;
+  }
+  .piece {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .circle {
+    border-radius: 50%;
+  }
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 50px solid;
+  }
+  .red.circle { background-color: red; }
+  .red.triangle { border-bottom-color: red; }
+  .black-piece.circle { background-color: black; }
+  .black-piece.triangle { border-bottom-color: black; }
+  .selected {
+    outline: 3px solid yellow;
+  }
+</style>
+</head>
+<body>
+
+<div id="board"></div>
+
+<script>
+const board = document.getElementById('board');
+let selectedPiece = null;
+let currentPlayer = 'red';
+
+let cells = [];
+for (let row = 0; row < 8; row++) {
+  cells[row] = [];
+  for (let col = 0; col < 8; col++) {
+    const cell = document.createElement('div');
+    cell.classList.add('cell', (row + col) % 2 === 0 ? 'white' : 'black');
+    cell.dataset.row = row;
+    cell.dataset.col = col;
+    cell.addEventListener('click', () => onCellClick(row, col));
+    board.appendChild(cell);
+    cells[row][col] = cell;
+  }
+}
+
+// Place initial pieces
+for (let row = 0; row < 3; row++) {
+  for (let col = 0; col < 8; col++) {
+    if ((row + col) % 2 !== 0) placePiece(row, col, 'black-piece');
+  }
+}
+for (let row = 5; row < 8; row++) {
+  for (let col = 0; col < 8; col++) {
+    if ((row + col) % 2 !== 0) placePiece(row, col, 'red');
+  }
+}
+
+function placePiece(row, col, color, isKing=false) {
+  const piece = document.createElement('div');
+  piece.classList.add('piece');
+  piece.classList.add(color);
+  piece.classList.add(isKing ? 'triangle' : 'circle');
+  cells[row][col].appendChild(piece);
+}
+
+function promoteToKing(piece) {
+  piece.classList.remove('circle');
+  piece.classList.add('triangle');
+}
+
+// Handle clicks
+function onCellClick(row, col) {
+  const cell = cells[row][col];
+  const piece = cell.querySelector('.piece');
+
+  if (selectedPiece) {
+    const fromCell = selectedPiece.cell;
+    const movingPiece = selectedPiece.piece;
+
+    if (isValidMove(fromCell, cell)) {
+      const capturedPieces = getCapturedPieces(fromCell, cell);
+      capturedPieces.forEach(p => p.remove());
+
+      // Move piece
+      cell.appendChild(movingPiece);
+      movingPiece.classList.remove('selected');
+
+      // Promote
+      if ((movingPiece.classList.contains('red') && row === 0) ||
+          (movingPiece.classList.contains('black-piece') && row === 7)) {
+        promoteToKing(movingPiece);
+      }
+
+      // Multi-jump
+      const moreCaptures = getPossibleCaptures(cell);
+      if (moreCaptures.length > 0) {
+        selectedPiece = { piece: movingPiece, cell: cell };
+        movingPiece.classList.add('selected');
+        return;
+      }
+
+      selectedPiece = null;
+      currentPlayer = currentPlayer === 'red' ? 'black-piece' : 'red';
+    } else {
+      movingPiece.classList.remove('selected');
+      selectedPiece = null;
+    }
+  } else if (piece && piece.classList.contains(currentPlayer)) {
+    selectedPiece = { piece, cell };
+    piece.classList.add('selected');
+  }
+}
+
+function isValidMove(fromCell, toCell) {
+  if (toCell.querySelector('.piece')) return false;
+  const capturedPieces = getCapturedPieces(fromCell, toCell);
+  if (capturedPieces.length > 0) return true;
+
+  const fromRow = parseInt(fromCell.dataset.row);
+  const fromCol = parseInt(fromCell.dataset.col);
+  const toRow = parseInt(toCell.dataset.row);
+  const toCol = parseInt(toCell.dataset.col);
+  const diffRow = toRow - fromRow;
+  const diffCol = toCol - fromCol;
+
+  const movingPiece = fromCell.querySelector('.piece');
+  const isKing = movingPiece.classList.contains('triangle');
+
+  if (!isKing && Math.abs(diffRow) === 1 && Math.abs(diffCol) === 1) {
+    if (movingPiece.classList.contains('red') && diffRow !== -1) return false;
+    if (movingPiece.classList.contains('black-piece') && diffRow !== 1) return false;
+    return true;
+  }
+
+  if (isKing && Math.abs(diffRow) === Math.abs(diffCol)) {
+    const stepRow = diffRow > 0 ? 1 : -1;
+    const stepCol = diffCol > 0 ? 1 : -1;
+    let r = fromRow + stepRow, c = fromCol + stepCol;
+    while (r !== toRow && c !== toCol) {
+      if (cells[r][c].querySelector('.piece')) return false;
+      r += stepRow;
+      c += stepCol;
+    }
+    return true;
+  }
+
+  return false;
+}
+
+function getCapturedPieces(fromCell, toCell) {
+  const fromRow = parseInt(fromCell.dataset.row);
+  const fromCol = parseInt(fromCell.dataset.col);
+  const toRow = parseInt(toCell.dataset.row);
+  const toCol = parseInt(toCell.dataset.col);
+
+  const movingPiece = fromCell.querySelector('.piece');
+  const isKing = movingPiece.classList.contains('triangle');
+  const captured = [];
+
+  if (isKing) {
+    const stepRow = toRow > fromRow ? 1 : -1;
+    const stepCol = toCol > fromCol ? 1 : -1;
+    let r = fromRow + stepRow;
+    let c = fromCol + stepCol;
+    while (r !== toRow && c !== toCol) {
+      const p = cells[r][c].querySelector('.piece');
+      if (p && !p.classList.contains(currentPlayer)) captured.push(p);
+      else if (p && p.classList.contains(currentPlayer)) return [];
+      r += stepRow; c += stepCol;
+    }
+  } else {
+    if (Math.abs(toRow - fromRow) === 2 && Math.abs(toCol - fromCol) === 2) {
+      const midR = (fromRow + toRow) / 2;
+      const midC = (fromCol + toCol) / 2;
+      const midP = cells[midR][midC].querySelector('.piece');
+      if (midP && !midP.classList.contains(currentPlayer)) captured.push(midP);
+    }
+  }
+
+  return captured;
+}
+
+function getPossibleCaptures(cell) {
+  const row = parseInt(cell.dataset.row);
+  const col = parseInt(cell.dataset.col);
+  const piece = cell.querySelector('.piece');
+  const directions = [[-1,-1],[-1,1],[1,-1],[1,1]];
+  const captures = [];
+
+  if (piece.classList.contains('triangle')) {
+    directions.forEach(([dr, dc]) => {
+      let r=row+dr, c=col+dc;
+      while(r>=0&&r<8&&c>=0&&c<8){
+        const target=cells[r][c].querySelector('.piece');
+        if(target&&!target.classList.contains(currentPlayer)){
+          const afterR=r+dr, afterC=c+dc;
+          if(afterR>=0&&afterR<8&&afterC>=0&&afterC<8&&!cells[afterR][afterC].querySelector('.piece')){
+            captures.push(cells[afterR][afterC]);
+          }
+          break;
+        }else if(target) break;
+        r+=dr; c+=dc;
+      }
+    });
+  } else {
+    directions.forEach(([dr,dc])=>{
+      const midR=row+dr, midC=col+dc, endR=row+2*dr, endC=col+2*dc;
+      if(midR>=0&&midR<8&&midC>=0&&midC<8&&endR>=0&&endR<8&&endC>=0&&endC<8){
+        const midP=cells[midR][midC].querySelector('.piece');
+        const endCell=cells[endR][endC];
+        if(midP&&!midP.classList.contains(currentPlayer)&&!endCell.querySelector('.piece')){
+          captures.push(endCell);
+        }
+      }
+    });
+  }
+
+  return captures;
+}
+</script>
+
+</body>
+</html>
