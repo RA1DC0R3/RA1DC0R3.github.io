@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        .button {
+            padding: 20px 40px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.2s;
+            margin-top: 20px; /* Add this margin to create space */
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .disabled {
+            background-color: #9e9e9e;
+            cursor: not-allowed;
+        }
+        #timer {
+            font-size: 2em;
+            margin-top: 20px;
+        }
+        #cps {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 1em;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Click Per Second Test</h1>
+
+        <!-- Input for choosing the duration -->
+        <label for="duration">Choose test duration (seconds): </label>
+        <input type="number" id="duration" min="1" value="5" />
+        <br>
+        
+        <button id="startButton" class="button">Start</button>
+        <div id="timer">0</div>
+        <div id="cps">CPS: 0</div>
+    </div>
+
+    <script>
+        let startButton = document.getElementById("startButton");
+        let timerElement = document.getElementById("timer");
+        let cpsElement = document.getElementById("cps");
+        let durationInput = document.getElementById("duration");
+
+        let clickCount = 0;
+        let gameStarted = false;
+        let gameEnded = false;
+        let startTime = 0;
+        let endTime = 0;
+        let elapsedTime = 0;
+
+        // Start the game when the button is clicked
+        startButton.addEventListener("click", () => {
+            if (!gameStarted) {
+                // Get the selected duration from the input field
+                let testDuration = parseInt(durationInput.value) || 5;  // Default to 5 if invalid input
+                if (testDuration <= 0) {
+                    alert("Please select a valid duration greater than 0!");
+                    return;
+                }
+
+                // Initialize variables
+                clickCount = 0;
+                elapsedTime = 0;
+                startTime = Date.now();
+                endTime = startTime + testDuration * 1000; // Test end time (in milliseconds)
+                gameStarted = true;
+                gameEnded = false;
+
+                // Start the countdown timer
+                startButton.innerText = "Click!";
+                startButton.classList.remove("disabled");
+                cpsElement.innerText = "CPS: 0";
+                startCountdown();
+            } else if (gameStarted && !gameEnded) {
+                // Count clicks during the game
+                clickCount++;
+                // Calculate CPS in real-time
+                elapsedTime = (Date.now() - startTime) / 1000; // elapsed time in seconds
+                let cps = clickCount / elapsedTime;
+                cpsElement.innerText = "CPS: " + cps.toFixed(2);
+            } else if (gameEnded) {
+                // Restart the game after a 2-second delay
+                startButton.classList.add("disabled");
+                setTimeout(() => {
+                    gameStarted = false;
+                    gameEnded = false;
+                    startButton.innerText = "Start";
+                    cpsElement.innerText = "CPS: 0";
+                    timerElement.innerText = "0";
+                    startButton.classList.remove("disabled");
+                }, 2000); // Lockout for 2 seconds
+            }
+        });
+
+        // Countdown timer for the game
+        function startCountdown() {
+            let countdownInterval = setInterval(() => {
+                let timeLeft = Math.max(0, (endTime - Date.now()) / 1000); // Remaining time in seconds
+                timerElement.innerText = timeLeft.toFixed(1);
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    endGame();
+                }
+            }, 100); // Update every 100ms
+        }
+
+        // End the game and show the final CPS
+        function endGame() {
+            gameEnded = true;
+            elapsedTime = (Date.now() - startTime) / 1000; // Final elapsed time in seconds
+            let finalCPS = clickCount / elapsedTime;
+            cpsElement.innerText = `Final CPS: ${finalCPS.toFixed(2)}`;
+            startButton.innerText = "Start Again";
+        }
+    </script>
+
+</body>
+</html>
