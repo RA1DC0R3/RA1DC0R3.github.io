@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>My GitHub Games</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    ul { list-style: none; padding: 0; }
+    li { margin-bottom: 15px; }
+    button { margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <h1>My GitHub Games</h1>
+  <ul>
+    <li>
+      <a href="browserquest/index.html" target="_blank">Play BrowserQuest</a>
+      <button onclick="downloadGame('browserquest/browserquest.zip')">Download</button>
+    </li>
+    <li>
+      <a href="hexgl/index.html" target="_blank">Play HexGL</a>
+      <button onclick="downloadGame('hexgl/hexgl.zip')">Download</button>
+    </li>
+  </ul>
+
+  <script>
+    async function downloadGame(path) {
+      const response = await fetch(path);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = path.split("/").pop();
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
