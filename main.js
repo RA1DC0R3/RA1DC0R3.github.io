@@ -1,11 +1,11 @@
-// ====== DOWNLOAD FILE (ZIP or Binary) ======
+// ====== DOWNLOAD FILE (for ZIP / Binary) ======
 function downloadFile(filename) {
   fetch(filename)
     .then(response => {
       if (!response.ok) {
         throw new Error("File not found: " + filename);
       }
-      return response.blob(); // Get file as Blob (handles binary)
+      return response.blob(); // Use blob because ZIP is binary
     })
     .then(blob => {
       const url = URL.createObjectURL(blob);
@@ -15,7 +15,7 @@ function downloadFile(filename) {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url); // Clean up
+      URL.revokeObjectURL(url);
     })
     .catch(err => {
       console.error(err);
@@ -27,7 +27,6 @@ function downloadFile(filename) {
 function submitRequest() {
   const name = document.getElementById("requesterName").value.trim();
   const requestText = document.getElementById("gameRequest").value.trim();
-
   if (!name || !requestText) {
     alert("Please enter both your name and a game request");
     return;
@@ -46,7 +45,6 @@ function submitRequest() {
 function submitReport() {
   const name = document.getElementById("reporterName").value.trim();
   const reportText = document.getElementById("gameReport").value.trim();
-
   if (!name || !reportText) {
     alert("Please enter both your name and a bug report");
     return;
