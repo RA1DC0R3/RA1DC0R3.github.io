@@ -58,4 +58,3 @@ function submitReport() {
   document.getElementById("reporterName").value = "";
   document.getElementById("gameReport").value = "";
 }
-
