@@ -1,16 +1,15 @@
-// ====== DOWNLOAD FILE USING BLOB ======
+// ====== DOWNLOAD ANY FILE (ZIP, HTML, JS, etc.) ======
 function downloadFile(filename) {
     fetch(filename)
         .then(response => {
             if (!response.ok) throw new Error("File not found");
-            return response.text(); // Get the file content as text
+            return response.blob(); // Use blob() so ZIP files work
         })
-        .then(content => {
-            const blob = new Blob([content], { type: "text/html" });
+        .then(blob => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = filename;
+            a.download = filename; // Save with same name
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -40,7 +39,7 @@ function submitRequest() {
     document.getElementById("gameRequest").value = "";
 }
 
-// ====== Submit Bug Report ======
+// ====== SUBMIT BUG REPORT ======
 function submitReport() {
     const name = document.getElementById("reporterName").value.trim();
     const reportText = document.getElementById("gameReport").value.trim();
@@ -57,3 +56,4 @@ function submitReport() {
     document.getElementById("reporterName").value = "";
     document.getElementById("gameReport").value = "";
 }
+
