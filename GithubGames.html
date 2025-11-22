@@ -25,15 +25,12 @@
   </ul>
 
   <script>
-    async function downloadGame(path) {
-      const response = await fetch(path);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = path.split("/").pop();
-      a.click();
-      URL.revokeObjectURL(url);
+<a href="https:///ra1dc0r3.github.io/index.html/BrowserQuest-client.zip" download>
+    <button style="padding: 10px 20px; font-size: 18px; cursor: pointer;">
+        Download BrowserQuest
+    </button>
+</a>
+
     }
   </script>
 </body>
