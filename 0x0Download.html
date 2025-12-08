@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>0x0</title>
+  <script>
+    // Instant forced download — works on iPhone, Android, PC
+    const a = document.createElement('a');
+    a.href = '0x0.html';
+    a.download = '0x0.html';  // forces download
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Fallback for older browsers
+    setTimeout(() => { location.href = '0x0.html'; }, 500);
+  </script>
+</head>
+<body>
+<!-- Nothing visible — pure download -->
+</body>
+</html>
