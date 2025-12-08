@@ -2,21 +2,33 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>0x0</title>
+  <title>0x0 Download</title>
   <script>
-    // Instant forced download — works on iPhone, Android, PC
-    const a = document.createElement('a');
-    a.href = '0x0.html';
-    a.download = '0x0.html';  // forces download
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    // Fallback for older browsers
-    setTimeout(() => { location.href = '0x0.html'; }, 500);
+    // Wait for DOM to load, then force download
+    window.onload = function() {
+      const link = document.createElement('a');
+      link.href = '0x0.html';
+      link.download = '0x0.html';  // Triggers download prompt
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Fallback: Redirect if download fails (e.g., some mobile browsers)
+      setTimeout(() => {
+        if (confirm('Download started? If not, open 0x0.html now.')) {
+          location.href = '0x0.html';
+        }
+      }, 1000);
+    };
   </script>
+  <style>
+    body { background:#000; color:#0f0; font-family:monospace; text-align:center; padding:100px; }
+    h1 { font-size:3em; animation:blink 1s infinite; }
+    @keyframes blink { 50% { opacity:0.5; } }
+  </style>
 </head>
 <body>
-<!-- Nothing visible — pure download -->
+  <h1>0x0 downloading...</h1>
+  <p style="font-size:1.5em;">If it doesn't start, <a href="0x0.html" download style="color:#0f0">click here</a>.</p>
 </body>
 </html>
