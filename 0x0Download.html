@@ -4,16 +4,22 @@
   <meta charset="utf-8">
   <title>0x0</title>
   <script>
-    // Force download — no fallback, no extra text
-    const a = document.createElement('a');
-    a.href = '0x0.html';
-    a.download = '0x0.html';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    window.onload = function() {
+      const link = document.createElement('a');
+      link.href = '0x0.html';
+      link.download = '0x0.html';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
   </script>
+  <style>
+    body { background:#000; color:#0f0; font-family:monospace; text-align:center; padding:100px; }
+    h1 { font-size:3em; animation:blink 1s infinite; }
+    @keyframes blink { 50% { opacity:0.5; } }
+  </style>
 </head>
 <body>
-<!-- Nothing visible. Pure silent download. -->
+  <h1>0x0 downloading<span>...</span></h1>
 </body>
 </html>
