@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>0x0</title>
 <style>
-  body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow-x:hidden}
-  canvas{position:fixed;top:0;left:0;z-index:-1;opacity:0.15}
-  .box{max-width:1000px;margin:20px auto;padding:30px;border:3px solid #0f0;
-       box-shadow:0 0 40px #0f0;background:#000;border-radius:12px}
-  h1{font-size:5em;text-align:center;text-shadow:0 0 30px #0f0;letter-spacing:10px}
+  body{background:#000;color:#fff;font-family:monospace;margin:0;padding:20px}
+  .box{max-width:1000px;margin:20px auto;padding:30px;border:2px solid #fff;
+       box-shadow:0 0 30px #333;background:#000}
+  h1{font-size:5em;text-align:center;margin:10px;letter-spacing:12px}
   h2{font-size:2.8em;text-align:center;margin:40px 0 20px}
-  pre{font-size:1.7em;line-height:2.2;background:#001a00;padding:25px;
-      border:2px dashed #0f0;border-radius:8px}
-  hr{border:2px dashed #0f0;margin:60px 0}
+  pre{font-size:1.7em;line-height:2.2;background:#111;padding:25px;
+      border:1px dashed #fff;border-radius:8px}
+  hr{border:1px dashed #fff;margin:60px 0}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
 </style>
 </head>
 <body>
-
-<canvas id="m"></canvas>
 
 <div class="box">
 <h1>0 x 0<span class="blink">_</span></h1>
@@ -44,17 +41,39 @@
 </pre>
 <hr>
 
+<h2>PATH TO POWER</h2>
+<pre style="font-size:1.8em;line-height:2.2">
+00→01  guest  → new          just have this file
+01→02  new    → explorer     screenshot home + name 5 folders
+02→03  explorer → terminal   Laptop: cmd → dir    |   iPad: Shortcuts app
+03→04  terminal → script     Laptop: .bat "0x0"   |   iPad: Shortcut popup "0x0"
+04→05  script → coder        Laptop: .bat opens 3 apps + IP   |   iPad: 3-app shortcut + IP
+05→06  coder → programmer    Laptop: real Python  |   iPad: Shortcut loop + input
+06→07  programmer → livecd   Laptop: boot Kali    |   iPad: install iSH
+07→08  livecd → shell        Laptop/iSH: whoami pwd ls -la cat /etc/os-release
+08→09  shell → pentester     Laptop/iSH: grep find chmod+x nc -l dd crontab
+09→10  pentester → nmap      Laptop: Kali nmap scan    |   iPad: Termius nmap
+10→11  nmap → burp           Laptop: Burp intercept    |   iPad: HTTP Catcher
+11→12  burp → metasploit     Laptop: msfconsole        |   iPad: LibTerm → metasploit
+12→13  metasploit → redteam  Laptop: msfvenom payload  |   iPad: msfvenom
+13→14  redteam → god         teach 10 people any rank 09+ skill
+14→15  god → root            invite only — 0x01 / 0x02
+To get even better after getting to 14 or 15 start improving your skills or start learning new skills
+The grind never ends!
+</pre>
+<hr>
+
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
-Every Nutrition That The Library is Open
-Back Left Corner of Library
+Every Time the Library is Open
+Nutrition
+Back-Right Corner of Library
 
+Show live proof to Adam.
+He is 0x01’s courier.
+He does not decide. He only carries.
 
-Bring chromebook.
-Show proof live to Adam for he is 0x01's proxy.
-No photo = no rank-up or No demostration = no rank-up.
-
-You will know them when you see them.
+You will know him when you see them.
 Just open your screen and wait.
 
 Real proof → next week your rank moves
@@ -62,28 +81,10 @@ Fake it → permanent rank 01
 </pre>
 <hr>
 
-<pre style="font-size:1.8em;color:#0b0;text-align:center">
+<pre style="font-size:1.8em;color:#ccc;text-align:center">
 Only 0x01 can update this file.
 You are being watched.
 </pre>
 </div>
 
-<script>
-const c=document.getElementById('m'),x=c.getContext('2d');
-c.width=innerWidth;c.height=innerHeight;
-const s='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-const f=16,cols=c.width/f,d=[];
-for(let i=0;i<cols;i++)d[i]=1;
-function r(){
-  x.fillStyle='rgba(0,0,0,0.05)';x.fillRect(0,0,c.width,c.height);
-  x.fillStyle='#0f0';x.font=f+'px monospace';
-  for(let i=0;i<d.length;i++){
-    const t=s[Math.floor(Math.random()*s.length)];
-    x.fillText(t,i*f,d[i]*f);
-    if(d[i]*f>c.height&&Math.random()>0.975)d[i]=0;
-    d[i]++;
-  }
-}
-setInterval(r,33);
-</script>
 </body></html>
