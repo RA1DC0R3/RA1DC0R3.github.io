@@ -2,18 +2,14 @@
 <html><head><meta charset="utf-8"><title>0x0</title>
 <style>
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow-x:hidden}
-  .box{
-    max-width:960px;margin:30px auto;padding:35px;
-    border:3px solid #0f0;
-    box-shadow:0 0 50px #0f0, inset 0 0 60px #001a00;
-    background:#000;
-    border-radius:12px;
-    position:relative;
-  }
-  h1{font-size:4.8em;text-align:center;margin:10px;text-shadow:0 0 30px #0f0;letter-spacing:12px}
-  h2{font-size:2.6em;text-align:center;margin:40px 0 20px}
-  pre{font-size:1.6em;line-height:2.1;background:#001a00;padding:25px;border:2px dashed #0f0;
-      border-radius:8px;overflow-x:auto;word-wrap:break-word;white-space:pre-wrap}
+  .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;
+       box-shadow:0 0 50px #0f0, inset 0 0 60px #001a00;background:#000;border-radius:12px}
+  h1{font-size:5em;text-align:center;margin:10px;text-shadow:0 0 30px #0f0;letter-spacing:12px}
+  h2{font-size:2.8em;text-align:center;margin:50px 0 20px}
+  table{width:100%;border-collapse:collapse;margin:20px 0;font-size:1.5em}
+  th,td{border:1px solid #0f0;padding:12px;text-align:left}
+  th{background:#001a00}
+  tr:nth-child(even){background:#001000}
   hr{border:1px dashed #0f0;margin:60px 0}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
@@ -26,8 +22,9 @@
 <h2>15 RANKS TO ROOT</h2>
 <hr>
 
-<pre id="ranks">
+<pre style="font-size:1.6em;background:#001a00;padding:20px;border:1px dashed #0f0;border-radius:8px">
 15 root        : 0x01
+15 root        : 0x02
 14 god         : —
 13 redteam     : —
 12 metasploit  : —
@@ -48,30 +45,30 @@
 <hr>
 
 <h2>PATH TO POWER</h2>
-<pre style="font-size:1.7em;line-height:2.2">
-00→01  guest  → new          just have this file
-01→02  new    → explorer     screenshot home + name 5 folders
-02→03  explorer → terminal   Laptop: cmd → dir    |   iPad: Shortcuts app
-03→04  terminal → script     Laptop: .bat "0x0"   |   iPad: Shortcut popup "0x0"
-04→05  script → coder        Laptop: .bat opens 3 apps + IP   |   iPad: 3-app shortcut + IP
-05→06  coder → programmer    Laptop: real Python  |   iPad: Shortcut loop + input
-06→07  programmer → livecd   Laptop: boot Kali    |   iPad: install iSH
-07→08  livecd → shell        Laptop/iSH: whoami pwd ls -la cat /etc/os-release
-08→09  shell → pentester     Laptop/iSH: grep find chmod+x nc -l dd crontab
-09→10  pentester → nmap      Laptop: Kali nmap scan    |   iPad: Termius nmap
-10→11  nmap → burp           Laptop: Burp intercept    |   iPad: HTTP Catcher
-11→12  burp → metasploit     Laptop: msfconsole        |   iPad: LibTerm → metasploit
-12→13  metasploit → redteam  Laptop: msfvenom payload  |   iPad: msfvenom
-13→14  redteam → god         teach 10 people any rank 09+ skill
-14→15  god → root            invite only — 0x01 / 0x02
-</pre>
+<table>
+  <tr><th>From → To</th><th>Laptop Proof</th><th>iPad Proof</th></tr>
+  <tr><td>00→01 guest → new</td><td colspan="2">Just have this file</td></tr>
+  <tr><td>01→02 new → explorer</td><td colspan="2">Screenshot home screen + name 5 folders/apps</td></tr>
+  <tr><td>02→03 explorer → terminal</td><td>cmd → dir</td><td>Shortcuts app open</td></tr>
+  <tr><td>03→04 terminal → script</td><td>.bat prints "0x0"</td><td>Shortcut popup "0x0"</td></tr>
+  <tr><td>04→05 script → coder</td><td>.bat opens 3 apps + show IP</td><td>Shortcut opens 3 apps + show IP</td></tr>
+  <tr><td>05→06 coder → programmer</td><td>Real Python script</td><td>Shortcut with loop + input</td></tr>
+  <tr><td>06→07 programmer → livecd</td><td>Boot Kali/Ubuntu live USB</td><td>Install iSH app</td></tr>
+  <tr><td>07→08 livecd → shell</td><td colspan="2">whoami, pwd, ls -la, cat /etc/os-release</td></tr>
+  <tr><td>08→09 shell → pentester</td><td colspan="2">grep, find, chmod +x, nc -l, dd, crontab</td></tr>
+  <tr><td>09→10 pentester → nmap</td><td>Kali nmap scan</td><td>Termius/Blink nmap</td></tr>
+  <tr><td>10→11 nmap → burp</td><td>Burp intercept</td><td>HTTP Catcher intercept</td></tr>
+  <tr><td>11→12 burp → metasploit</td><td>msfconsole</td><td>LibTerm → metasploit</td></tr>
+  <tr><td>12→13 metasploit → redteam</td><td>msfvenom payload</td><td>msfvenom in LibTerm</td></tr>
+  <tr><td>13→14 redteam → god</td><td colspan="2">Teach 10 people any rank 09+ skill</td></tr>
+  <tr><td>14→15 god → root</td><td colspan="2">Invite only — 0x01 / 0x02</td></tr>
+</table>
 <hr>
 
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
-Every Time Library is Open
-Nutrition
-Library (back right corner)
+Every Time Library is Open • Nutrition
+Library (back left corner)
 
 Show live proof to Adam.
 He is 0x01’s courier.
