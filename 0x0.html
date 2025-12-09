@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>0x0</title>
-<style>
-  body{margin:0;background:#000;color:#0f0;font-family:monospace;text-align:center;padding-top:15%}
-  input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:300px}
-  .hidden{display:none}
-  .blink{animation:b 1s steps(1) infinite}
-  @keyframes b{50%{opacity:0}}
-</style>
-</head>
-<body>
-
-<h1 style="font-size:4em">0 x 0<span class="blink">_</span></h1>
-
-<div id="lock">
-  <h2>ENTER PASSWORD</h2>
-  <input type="password" id="pass" placeholder="••••••••" autocomplete="off">
-  <button onclick="check()">ACCESS</button>
-</div>
-
-<div id="main" class="hidden">
-<!DOCTYPE html>
+5<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>0x0</title>
 <style>
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow-x:hidden}
+  canvas{position:fixed;top:0;left:0;z-index:-1;opacity:0.15}
   .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;
        box-shadow:0 0 50px #0f0, inset 0 0 60px #001a00;background:#000;border-radius:12px}
   h1{font-size:5em;text-align:center;margin:10px;text-shadow:0 0 30px #0f0;letter-spacing:12px}
@@ -34,10 +14,29 @@
   hr{border:1px dashed #0f0;margin:60px 0}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
+  #lock, #denied{text-align:center;padding-top:15%}
+  input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:300px;margin:10px}
 </style>
 </head>
 <body>
 
+<canvas id="m"></canvas>
+
+<!-- LOGIN SCREEN — completely hidden after correct password -->
+<div id="lock">
+  <h1>0 x 0<span class="blink">_</span></h1>
+  <h2>ENTER PASSWORD</h2>
+  <input type="password" id="pass" placeholder="•••••••" autocomplete="off"><br>
+  <button onclick="check()">ACCESS</button>
+</div>
+
+<div id="denied" class="hidden">
+  <h1 style="color:#f00">ACCESS DENIED</h1>
+  <button onclick="location.reload()">Try Again</button>
+</div>
+
+<!-- MAIN CONTENT — only appears after correct password -->
+<div id="main" class="hidden">
 <div class="box">
 <h1>0 x 0<span class="blink">_</span></h1>
 <h2>20 RANKS TO ROOT</h2>
@@ -85,11 +84,11 @@
   <tr><td>09→10 ip → port</td><td>Explain ports + list 5 common ones</td></tr>
   <tr><td>10→11 port → mac</td><td>Explain + show your MAC address</td></tr>
   <tr><td>11→12 mac → arp</td><td>Run `arp -a` + explain output</td></tr>
-  <tr><td>12→13 arp → dhcp</td><td>Explain DHCP process (Discover→Offer→Request→ACK) + show your DHCP server IP</td></tr>
+  <tr><td>12→13 arp → dhcp</td><td>Explain DHCP (DORA) + show your DHCP server IP</td></tr>
   <tr><td>13→14 dhcp → dns</td><td>Explain DNS + run `nslookup google.com`</td></tr>
   <tr><td>14→15 dns → nmap</td><td>Kali nmap scan  |  Termius nmap</td></tr>
   <tr><td>15→16 nmap → burp</td><td>Burp intercept  |  HTTP Catcher</td></tr>
-  <tr><td>16→17 burp → metasploit</td><td>msfconsole  |  LibTerm metasploit</td></tr>
+  <tr><td>16→17 burp → metasploit</td><td>msfconsole  |  LibTerm → metasploit</td></tr>
   <tr><td>17→18 metasploit → redteam</td><td>msfvenom payload</td></tr>
   <tr><td>18→19 redteam → god</td><td>Teach 10 people any rank 08+ skill</td></tr>
   <tr><td>19→20 god → root</td><td>Invite only — 0x01 / 0x02</td></tr>
@@ -99,11 +98,10 @@
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
 Every Lunch • Lunch A
-One of the Lunch Tables On the Right
+One of the Lunch Tables on the Right
 
 Show live proof to 0x01 or 0x02
 Real proof → next week rank up
-Fake → permanent 01
 </pre>
 <hr>
 <pre style="font-size:1.8em;color:#0b0;text-align:center">
@@ -111,21 +109,38 @@ Only 0x01 and 0x02 update this file.
 You are being watched.
 </pre>
 </div>
-
-</body></html>
-  <p style="margin-top:50px"><small>You are being watched.</small></p>
 </div>
 
 <script>
-const correct = "726f6f74";  // ← change this to any password you want
+// Change password here
+const password = "726f6f74";
+
 function check() {
-  if (document.getElementById('pass').value === correct) {
-    document.getElementById('lock').classList.add('hidden');
-    document.getElementById('main').classList.remove('hidden');
+  if (document.getElementById('pass').value === password) {
+    document.getElementById('lock').style.display = 'none';   // completely removes login screen
+    document.getElementById('main').style.display = 'block';
   } else {
-    document.body.innerHTML = "<h1 style='color:red'>ACCESS DENIED<br>PERMANENT RANK 01</h1>";
+    document.getElementById('lock').style.display = 'none';
+    document.getElementById('denied').style.display = 'block';
   }
 }
-</script>
 
+// Matrix rain
+const c=document.getElementById('m'),x=c.getContext('2d');
+c.width=innerWidth;c.height=innerHeight;
+const s='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+const f=16,cols=c.width/f,d=[];
+for(let i=0;i<cols;i++)d[i]=1;
+function r(){
+  x.fillStyle='rgba(0,0,0,0.05)';x.fillRect(0,0,c.width,c.height);
+  x.fillStyle='#0f0';x.font=f+'px monospace';
+  for(let i=0;i<d.length;i++){
+    const t=s[Math.floor(Math.random()*s.length)];
+    x.fillText(t,i*f,d[i]*f);
+    if(d[i]*f>c.height&&Math.random()>0.975)d[i]=0;
+    d[i]++;
+  }
+}
+setInterval(r,33);
+</script>
 </body></html>
