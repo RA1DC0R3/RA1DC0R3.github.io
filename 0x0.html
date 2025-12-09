@@ -28,7 +28,7 @@
 <div id="lock">
   <h1>0 x 0<span class="blink">_</span></h1>
   <h2>ENTER PASSWORD</h2>
-  <input type="password" id="pass" placeholder="••••••••" autocomplete="off" onkeypress="if(event.key==='Enter')check()"><br>
+  <input type="password" id="pass" placeholder="••••••••" autocomplete="off"><br>
   <button onclick="check()">ACCESS</button>
 </div>
 
@@ -101,8 +101,8 @@
 Every Lunch • Lunch A
 One of the Lunch Tables on the Right Side
 
-Show live proof to 0x01 and 0x02.
-Real proof → next week rank up
+Show live proof to 0x01 or 0x02.
+Real proof → next day rank up
 </pre>
 <hr>
 
@@ -118,7 +118,7 @@ You are being watched.
 </div>
 
 <script>
-// Password = LOL U THOUGHT I WOULD REALLLY WRITE DOWN THE PASSWD HERE! → SHA-1 hash
+// Password = 726f6f74 → correct SHA-1 hash
 const correctHash = "2ab31a24ebddd63f2adcb904771f1d9a0820e337";
 
 async function sha1(str) {
@@ -139,13 +139,18 @@ async function check() {
   }
 }
 
-// Enter key = access
-document.getElementById('pass').addEventListener('keypress', e => { if (e.key === 'Enter') check(); });
+// Enter key = access (fixed — now works 100%)
+document.getElementById('pass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    check();
+  }
+});
 
 // Matrix rain
 const c=document.getElementById('m'),x=c.getContext('2d');
 c.width=innerWidth;c.height=innerHeight;
-const s='01020304050607080910111213141516171819!@#$%^&*()/|+-_=;
+const s='01020304050607080910111213141516171819!@#$%^&*()_+-=|/.,;[]{}<>?';
 const f=16,cols=c.width/f,d=[];
 for(let i=0;i<cols;i++)d[i]=1;
 function r(){
