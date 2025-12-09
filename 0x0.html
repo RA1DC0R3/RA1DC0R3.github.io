@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>0x0</title>
 <style>
+  body{margin:0;background:#000;color:#0f0;font-family:monospace;text-align:center;padding-top:15%}
+  input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:300px}
+  .hidden{display:none}
+  .blink{animation:b 1s steps(1) infinite}
+  @keyframes b{50%{opacity:0}}
+</style>
+</head>
+<body>
+
+<h1 style="font-size:4em">0 x 0<span class="blink">_</span></h1>
+
+<div id="lock">
+  <h2>ENTER PASSWORD</h2>
+  <input type="password" id="pass" placeholder="••••••••" autocomplete="off">
+  <button onclick="check()">ACCESS</button>
+</div>
+
+<div id="main" class="hidden">
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>0x0</title>
+<style>
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow-x:hidden}
   .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;
        box-shadow:0 0 50px #0f0, inset 0 0 60px #001a00;background:#000;border-radius:12px}
@@ -19,71 +40,92 @@
 
 <div class="box">
 <h1>0 x 0<span class="blink">_</span></h1>
-<h2>15 RANKS TO ROOT</h2>
+<h2>20 RANKS TO ROOT</h2>
 <hr>
 
 <pre style="font-size:1.6em;background:#001a00;padding:20px;border:1px dashed #0f0;border-radius:8px">
-15 root        : 0x01
-15 root        : 0x02
-14 god         : —
-13 redteam     : —
-12 metasploit  : —
-11 burp        : -
-10 nmap        : —
-09 pentester   : —
-08 shell       : -
-07 livecd      : -
-06 programmer  : —
-05 coder       : Chase
-05 coder       : Walter
-04 script      : —
-03 terminal    : —
-02 explorer    : —
-01 new         : Aizeeden
-00 guest       : —
+20 root        : 0x01
+20 root        : 0x02
+19 god         : —
+18 redteam     : —
+17 metasploit  : —
+16 burp        : —
+15 nmap        : —
+14 dhcp        : —
+13 dns         : —
+12 arp         : —
+11 mac         : —
+10 port        : —
+09 ip          : —
+08 pentester   : —
+07 shell       : —
+06 livecd      : —
+05 programmer  : —
+04 coder       : Chase
+04 coder       : Walter
+03 script      : —
+02 terminal    : —
+01 explorer    : —
+00 new         : Aizeeden
 </pre>
 <hr>
 
 <h2>PATH TO POWER</h2>
 <table>
-  <tr><th>From → To</th><th>Laptop Proof</th><th>iPad Proof</th></tr>
-  <tr><td>00→01 guest → new</td><td colspan="2">Just have this file</td></tr>
-  <tr><td>01→02 new → explorer</td><td colspan="2">Screenshot home screen + name 5 folders/apps</td></tr>
-  <tr><td>02→03 explorer → terminal</td><td>cmd → dir</td><td>Shortcuts app open</td></tr>
-  <tr><td>03→04 terminal → script</td><td>.bat prints "0x0"</td><td>Shortcut popup "0x0"</td></tr>
-  <tr><td>04→05 script → coder</td><td>.bat opens 3 apps + show IP</td><td>Shortcut opens 3 apps + show IP</td></tr>
-  <tr><td>05→06 coder → programmer</td><td>Real Python script</td><td>Shortcut with loop + input</td></tr>
-  <tr><td>06→07 programmer → livecd</td><td>Boot Kali/Ubuntu live USB</td><td>Install iSH app</td></tr>
-  <tr><td>07→08 livecd → shell</td><td colspan="2">whoami, pwd, ls -la, cat /etc/os-release</td></tr>
-  <tr><td>08→09 shell → pentester</td><td colspan="2">grep, find, chmod +x, nc -l, dd, crontab</td></tr>
-  <tr><td>09→10 pentester → nmap</td><td>Kali nmap scan</td><td>Termius/Blink nmap</td></tr>
-  <tr><td>10→11 nmap → burp</td><td>Burp intercept</td><td>HTTP Catcher intercept</td></tr>
-  <tr><td>11→12 burp → metasploit</td><td>msfconsole</td><td>LibTerm → metasploit</td></tr>
-  <tr><td>12→13 metasploit → redteam</td><td>msfvenom payload</td><td>msfvenom in LibTerm</td></tr>
-  <tr><td>13→14 redteam → god</td><td colspan="2">Teach 10 people any rank 09+ skill</td></tr>
-  <tr><td>14→15 god → root</td><td colspan="2">Invite only — 0x01 / 0x02</td></tr>
+  <tr><th>From → To</th><th>Proof (live demo or screenshot)</th></tr>
+  <tr><td>00→01 new → explorer</td><td>Screenshot home + name 5 items</td></tr>
+  <tr><td>01→02 explorer → terminal</td><td>cmd → dir  |  Shortcuts app</td></tr>
+  <tr><td>02→03 terminal → script</td><td>.bat prints "0x0"  |  Shortcut popup</td></tr>
+  <tr><td>03→04 script → coder</td><td>.bat opens 3 apps + show IP</td></tr>
+  <tr><td>04→05 coder → programmer</td><td>Real Python script  |  Shortcut loop</td></tr>
+  <tr><td>05→06 programmer → livecd</td><td>Boot Kali  |  Install iSH</td></tr>
+  <tr><td>06→07 livecd → shell</td><td>whoami, pwd, ls -la, cat /etc/os-release</td></tr>
+  <tr><td>07→08 shell → pentester</td><td>grep, find, chmod +x, nc -l, dd</td></tr>
+  <tr><td>08→09 pentester → ip</td><td>Explain + show public vs private IP</td></tr>
+  <tr><td>09→10 ip → port</td><td>Explain ports + list 5 common ones</td></tr>
+  <tr><td>10→11 port → mac</td><td>Explain + show your MAC address</td></tr>
+  <tr><td>11→12 mac → arp</td><td>Run `arp -a` + explain output</td></tr>
+  <tr><td>12→13 arp → dhcp</td><td>Explain DHCP process (Discover→Offer→Request→ACK) + show your DHCP server IP</td></tr>
+  <tr><td>13→14 dhcp → dns</td><td>Explain DNS + run `nslookup google.com`</td></tr>
+  <tr><td>14→15 dns → nmap</td><td>Kali nmap scan  |  Termius nmap</td></tr>
+  <tr><td>15→16 nmap → burp</td><td>Burp intercept  |  HTTP Catcher</td></tr>
+  <tr><td>16→17 burp → metasploit</td><td>msfconsole  |  LibTerm metasploit</td></tr>
+  <tr><td>17→18 metasploit → redteam</td><td>msfvenom payload</td></tr>
+  <tr><td>18→19 redteam → god</td><td>Teach 10 people any rank 08+ skill</td></tr>
+  <tr><td>19→20 god → root</td><td>Invite only — 0x01 / 0x02</td></tr>
 </table>
 <hr>
 
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
-Every Time Library is Open • Nutrition
-Library (back left corner)
+Every Lunch • Lunch A
+One of the Lunch Tables On the Right
 
-Show live proof to 0x01 or 0x02.
-
-You will know them when you see them.
-Just open your screen and wait.
-
-Real proof → next week your rank moves
-Fake it → permanent rank 01
+Show live proof to 0x01 or 0x02
+Real proof → next week rank up
+Fake → permanent 01
 </pre>
 <hr>
-
 <pre style="font-size:1.8em;color:#0b0;text-align:center">
-Only 0x01 and 0x02 can update this file.
+Only 0x01 and 0x02 update this file.
 You are being watched.
 </pre>
 </div>
+
+</body></html>
+  <p style="margin-top:50px"><small>You are being watched.</small></p>
+</div>
+
+<script>
+const correct = "726f6f74";  // ← change this to any password you want
+function check() {
+  if (document.getElementById('pass').value === correct) {
+    document.getElementById('lock').classList.add('hidden');
+    document.getElementById('main').classList.remove('hidden');
+  } else {
+    document.body.innerHTML = "<h1 style='color:red'>ACCESS DENIED<br>PERMANENT RANK 01</h1>";
+  }
+}
+</script>
 
 </body></html>
