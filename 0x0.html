@@ -17,6 +17,7 @@
   hr{border:1px dashed #0f0;margin:60px 0}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
+  .warning{background:#300;color:#f00;border:2px solid #f00;padding:25px;margin:30px 0;font-size:1.4em;border-radius:8px;text-align:center}
 </style>
 </head>
 <body>
@@ -37,6 +38,15 @@
 
 <div id="main">
 <div class="box">
+
+<div class="warning">
+  <strong>LEGAL WARNING</strong><br><br>
+  0x01 and 0x02 do NOT authorize or take responsibility for any illegal, harmful, or school-rule-breaking actions.<br>
+  All challenges are for learning only.<br>
+  You alone are responsible for what you do.<br>
+  Breaking laws or school rules = permanent removal from 0x0.
+</div>
+
 <h1>0 x 0<span class="blink">_</span></h1>
 <h2>20 RANKS TO ROOT</h2>
 <hr>
@@ -96,8 +106,8 @@
 
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
-Every Every Lunch • Lunch A
-Right Side of Lunch Benches
+Every Lunch • Lunch A
+One of the Right Side Lunch Tables
 
 Show live proof to 0x01 or 0x02.
 Real proof → next day rank up
@@ -111,7 +121,7 @@ You are being watched.
 </div>
 
 <script>
-// Password = 726f6f74 → correct hash
+// Password = LOL_U_THOUGHT_I_WOULD_ACTUALLY_WRITE_DOWN_THE_PASSWD_IN_THE_COMMENT_SO_I_WOULDN'T_FORGET_LOL → SHA-1 hash
 const correctHash = "2ab31a24ebddd63f2adcb904771f1d9a0820e337";
 
 async function sha1(str) {
@@ -132,15 +142,13 @@ async function check() {
   }
 }
 
-// Enter key = auto ACCESS
-document.getElementById('pass').addEventListener('keypress', e => {
-  if (e.key === 'Enter') check();
-});
+// Enter key = access
+document.getElementById('pass').addEventListener('keypress', e => { if (e.key === 'Enter') check(); });
 
 // Matrix rain
 const c=document.getElementById('m'),x=c.getContext('2d');
 c.width=innerWidth;c.height=innerHeight;
-const s='01020304050607080910111213141516171819!@#$%^&*()<>?|';
+const s='01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
 const f=16,cols=c.width/f,d=[];
 for(let i=0;i<cols;i++)d[i]=1;
 function r(){
