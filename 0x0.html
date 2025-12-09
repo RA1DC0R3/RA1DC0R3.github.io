@@ -3,7 +3,7 @@
 <style>
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow:hidden}
   canvas{position:fixed;top:0;left:0;z-index:-1;opacity:0.15}
-  #lock, #denied{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10;text-align:center;padding-top:15%}
+  #lock,#denied{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10;text-align:center;padding-top:15%}
   #main{visibility:hidden;opacity:0;transition:opacity 1s;overflow-y:auto;height:100vh}
   input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:300px;margin:10px}
   .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;
@@ -26,7 +26,7 @@
 <div id="lock">
   <h1>0 x 0<span class="blink">_</span></h1>
   <h2>ENTER PASSWORD</h2>
-  <input type="password" id="pass" placeholder="•••••••" autocomplete="off"><br>
+  <input type="password" id="pass" placeholder="••••••••" autocomplete="off"><br>
   <button onclick="check()">ACCESS</button>
 </div>
 
@@ -96,8 +96,8 @@
 
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
-Every Lunch • Lunch A
-Right Side Lunch Tables
+Every Friday • 12:15–12:30 PM
+Cafeteria Table 7
 
 Show live proof to 0x01 or 0x02.
 Real proof → next week rank up
@@ -111,10 +111,17 @@ You are being watched.
 </div>
 
 <script>
-const password = "null"; // change anytime
+const correctHash = "2c1f7b0d2c8e7f9a1b3d5e7f9a1b3d5e7f9a1b3d";
 
-function check() {
-  if (document.getElementById('pass').value === password) {
+async function sha1(str) {
+  const buf = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function check() {
+  const input = document.getElementById('pass').value;
+  const inputHash = await sha1(input);
+  if (inputHash === correctHash) {
     document.getElementById('lock').style.display = 'none';
     document.getElementById('main').style.visibility = 'visible';
     document.getElementById('main').style.opacity = '1';
