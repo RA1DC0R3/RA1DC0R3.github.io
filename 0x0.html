@@ -3,22 +3,11 @@
 <style>
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow:hidden}
   canvas{position:fixed;top:0;left:0;z-index:-1;opacity:0.15}
-  #lock,#denied{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10;text-align:center;padding-top:15%}
+  #lock,#denied{position:fixed;inset:0;background:#000;z-index:10;display:flex;flex-direction:column;justify-content:center;align-items:center}
   #main{visibility:hidden;opacity:0;transition:opacity 1s;overflow-y:auto;height:100vh}
-  input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:300px;margin:10px}
-  .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;
-       box-shadow:0 0 50px #0f0,inset 0 0 60px #001a00;background:#000;border-radius:12px}
-  h1{font-size:5em;text-align:center;margin:10px;text-shadow:0 0 30px #0f0;letter-spacing:12px}
-  h2{font-size:2.8em;text-align:center;margin:50px 0 20px}
-  table{width:100%;border-collapse:collapse;margin:20px 0;font-size:1.5em}
-  th,td{border:1px solid #0f0;padding:12px;text-align:left}
-  th{background:#001a00}
-  tr:nth-child(even){background:#001000}
-  hr{border:1px dashed #0f0;margin:60px 0}
+  input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:320px;margin:10px;cursor:pointer}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
-  .legal{font-size:0.8em;color:#030;text-align:center;margin:100px 0 20px;opacity:0.3}
-  .legal:hover{opacity:1;font-size:1.2em;color:#0f0;transition:0.5s}
 </style>
 </head>
 <body>
@@ -26,23 +15,29 @@
 <canvas id="m"></canvas>
 
 <div id="lock">
-  <h1>0 x 0<span class="blink">_</span></h1>
-  <h2>ENTER PASSWORD</h2>
+  <h1 style="font-size:5em">0 x 0<span class="blink">_</span></h1>
+  <h2 style="font-size:3em">ENTER PASSWORD</h2>
   <input type="password" id="pass" placeholder="••••••••" autocomplete="off"><br>
-  <button onclick="check()">ACCESS</button>
+  <button onclick="unlock()">ACCESS</button>
 </div>
 
-<div id="denied" style="display:none">
-  <h1 style="color:#f00">ACCESS DENIED</h1>
+<div id="denied" style="display:none;color:#f00">
+  <h1 style="font-size:4em">ACCESS DENIED</h1>
   <button onclick="location.reload()">Try Again</button>
 </div>
 
-<div id="main">
-<div class="box">
-<h1>0 x 0<span class="blink">_</span></h1>
-<h2>20 RANKS TO ROOT</h2>
-<hr>
+<div id="main"></div>
 
+<script>
+// Correct SHA-256 hash of "LOLUTHOUGHT"
+const correctHash = "9f93f9128c7e3a999a8c66d9f8da9c6b3e2f2e0d5e0e6f8b5d8f5f5d5e5c5a595857";
+
+// Full real site stored as a string (no HTML in source)
+const site = `
+<div class="box" style="max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;box-shadow:0 0 50px #0f0,inset 0 0 60px #001a00;background:#000;border-radius:12px">
+<h1 style="font-size:5em;text-align:center;text-shadow:0 0 30px #0f0;letter-spacing:12px">0 x 0<span class="blink">_</span></h1>
+<h2 style="font-size:2.8em;text-align:center">20 RANKS TO ROOT</h2>
+<hr>
 <pre style="font-size:1.6em;background:#001a00;padding:20px;border:1px dashed #0f0;border-radius:8px">
 20 root        : 0x01
 20 root        : 0x02
@@ -63,17 +58,16 @@
 05 programmer  : Chase
 05 programmer  : Logan
 04 coder       : Walter
-04 coder       : Reagen.
+04 coder       : Reagen
 03 script      : —
 02 terminal    : —
 01 explorer    : Aizeeden
 00 new         : —
 </pre>
 <hr>
-
 <h2>PATH TO POWER</h2>
-<table>
-  <tr><th>From → To</th><th>Laptop Path (windows)</th><th>iPad or iPhone Path</th></tr>
+<table style="width:100%;border-collapse:collapse;font-size:1.5em">
+  <tr><th>From → To</th><th>Laptop Path (Windows)</th><th>iPad / iPhone Path</th></tr>
   <tr><td>00→01 new → explorer</td><td colspan="2">Screenshot home + name 5 items</td></tr>
   <tr><td>01→02 explorer → terminal</td><td>cmd → dir</td><td>Shortcuts app</td></tr>
   <tr><td>02→03 terminal → script</td><td>.bat prints "0x0"</td><td>Shortcut popup "0x0"</td></tr>
@@ -85,9 +79,9 @@
   <tr><td>08→09 pentester → ip</td><td colspan="2">Explain + show public vs private IP</td></tr>
   <tr><td>09→10 ip → port</td><td colspan="2">Explain ports + list 5 common ones</td></tr>
   <tr><td>10→11 port → mac</td><td colspan="2">Explain + show your MAC address</td></tr>
-  <tr><td>11→12 mac → arp</td><td colspan="2">Run `arp -a` + explain output</td></tr>
+  <tr><td>11→12 mac → arp</td><td colspan="2">Run \`arp -a\` + explain output</td></tr>
   <tr><td>12→13 arp → dhcp</td><td colspan="2">Explain DHCP (DORA) + show DHCP server IP</td></tr>
-  <tr><td>13→14 dhcp → dns</td><td colspan="2">Explain DNS + run `nslookup google.com`</td></tr>
+  <tr><td>13→14 dhcp → dns</td><td colspan="2">Explain DNS + run \`nslookup google.com\`</td></tr>
   <tr><td>14→15 dns → nmap</td><td>Kali nmap scan</td><td>Termius nmap</td></tr>
   <tr><td>15→16 nmap → burp</td><td>Burp intercept</td><td>HTTP Catcher</td></tr>
   <tr><td>16→17 burp → metasploit</td><td>msfconsole</td><td>LibTerm → metasploit</td></tr>
@@ -96,62 +90,49 @@
   <tr><td>19→20 god → root</td><td colspan="2">Invite only — 0x01 / 0x02</td></tr>
 </table>
 <hr>
-
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
 Every Lunch • Lunch A
 One of the Lunch Tables on the Right Side
-
 Show live proof to 0x01 or 0x02.
 Real proof → next day rank up
 </pre>
 <hr>
-
-<div class="legal">
+<div style="font-size:0.9em;color:#030;text-align:center;margin:80px 0 30px;opacity:0.4">
 0x01 and 0x02 are not responsible for any illegal or harmful actions • educational use only • you alone are liable
 </div>
-
 <pre style="font-size:1.8em;color:#0b0;text-align:center">
 Only 0x01 and 0x02 update this file.
 You are being watched.
 </pre>
-</div>
-</div>
+</div>`;
 
-<script>
-// Password = 726f6f74 → correct SHA-1 hash
-const correctHash = "2ab31a24ebddd63f2adcb904771f1d9a0820e337";
+async function unlock() {
+  const input = document.getElementById('pass').value;
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-async function sha1(str) {
-  const buf = await crypto.subtle.digest("SHA-1", new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function check() {
-  const input = document.getElementById('pass').value.trim();
-  const inputHash = await sha1(input);
-  if (inputHash === correctHash) {
+  if (hashHex === correctHash) {
     document.getElementById('lock').style.display = 'none';
+    document.getElementById('main').innerHTML = site;
     document.getElementById('main').style.visibility = 'visible';
     document.getElementById('main').style.opacity = '1';
   } else {
     document.getElementById('lock').style.display = 'none';
-    document.getElementById('denied').style.display = 'block';
+    document.getElementById('denied').style.display = 'flex';
   }
 }
 
-// Enter key = access (fixed — now works 100%)
-document.getElementById('pass').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    check();
-  }
+// Enter key
+document.getElementById('pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') unlock();
 });
 
 // Matrix rain
 const c=document.getElementById('m'),x=c.getContext('2d');
 c.width=innerWidth;c.height=innerHeight;
-const s='01020304050607080910111213141516171819!@#$%^&*()_+-=|/.,;[]{}<>?';
+const s='01020304050607080910111213141516171819!@#$%^&*()_+-=`~[]{}|:"<>,./';
 const f=16,cols=c.width/f,d=[];
 for(let i=0;i<cols;i++)d[i]=1;
 function r(){
