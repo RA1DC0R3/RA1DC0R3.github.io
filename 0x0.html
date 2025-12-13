@@ -38,10 +38,8 @@
 <div id="main"></div>
 
 <script>
-// Password hidden (base64 + reversed — no one sees "726f6f74")
-const pw = atob("NzI2ZjZvNmY3NA==").split("").reverse().join("");
-
-// Full real site — table now beautiful again
+// Password hidden (base64 + reversed correctly now)
+const pw = atob("NzI2ZjZvNmY3NA==").split("").reverse().join("").toLowerCase();// Full real site — table now beautiful again
 const site = `
 <div class="box">
 <h1>0 x 0<span class="blink">_</span></h1>
