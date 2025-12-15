@@ -4,19 +4,23 @@
   body{margin:0;background:#000;color:#0f0;font-family:monospace;overflow:hidden}
   canvas{position:fixed;top:0;left:0;z-index:-1;opacity:0.15}
   #lock,#denied{position:fixed;inset:0;background:#000;z-index:10;display:flex;flex-direction:column;justify-content:center;align-items:center}
-  #main{visibility:hidden;opacity:0;transition:opacity 1s;overflow-y:auto;height:100vh}
+  #main{visibility:hidden;opacity:0;transition:opacity 1s;overflow-y:auto;height:100vh;padding:20px}
   input,button{background:#000;color:#0f0;border:2px solid #0f0;padding:15px;font-size:2em;width:320px;margin:10px;cursor:pointer}
-  .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;box-shadow:0 0 50px #0f0,inset 0 0 60px #001a00;background:#000;border-radius:12px}
+  .box{max-width:960px;margin:30px auto;padding:40px;border:3px solid #0f0;box-shadow:0 0 50px #0f0,inset 0 0 60px #001a00;background:#000;border-radius:12px;color:#0f0}
   h1{font-size:5em;text-align:center;margin:10px;text-shadow:0 0 30px #0f0;letter-spacing:12px}
   h2{font-size:2.8em;text-align:center;margin:50px 0 20px}
   table{width:100%;border-collapse:collapse;margin:20px 0;font-size:1.5em}
-  th,td{border:1px solid #0f0;padding:12px;text-align:left}
+  th,td{border:1px solid #0f0;padding:12px;text-align:left;color:#0f0}
   th{background:#001a00}
   tr:nth-child(even){background:#001000}
   hr{border:1px dashed #0f0;margin:60px 0}
+  pre{font-size:1.6em;background:#001a00;padding:20px;border:1px dashed #0f0;border-radius:8px;color:#0f0}
   .blink{animation:b 1s steps(1) infinite}
   @keyframes b{50%{opacity:0}}
   .legal{font-size:0.9em;color:#030;text-align:center;margin:80px 0 30px;opacity:0.4}
+  #switcher{text-align:center;margin:20px 0}
+  #switcher button{background:#001a00;color:#0f0;font-size:1.8em;padding:10px 30px;margin:0 10px;width:auto;border:2px solid #0f0}
+  #switcher button.active{background:#0f0;color:#000}
 </style>
 </head>
 <body>
@@ -38,16 +42,12 @@
 <div id="main"></div>
 
 <script>
-// Correct SHA-256 hash of "726f6f74" (100% verified)
+// Correct SHA-256 hash of "LOLUTHOUGHT"
 const correctHash = "9ca83ecbfb7899974ceda6de0e0a92cfdc9d12ab1075cadb3c0b84526f7080c9";
 
-// Full real site (beautiful table, Logan programmer, correct verification)
-const site = `
-<div class="box">
-<h1>0 x 0<span class="blink">_</span></h1>
-<h2>20 RANKS TO ROOT</h2>
-<hr>
-<pre style="font-size:1.6em;background:#001a00;padding:20px;border:1px dashed #0f0;border-radius:8px">
+// Leaderboards — early ranks (00–04) identical on both
+const ethicalHackerLeaderboard = `
+<pre>
 20 root        : 0x01
 20 root        : 0x02
 19 god         : —
@@ -63,18 +63,46 @@ const site = `
 09 ip          : —
 08 pentester   : —
 07 shell       : —
-06 livecd      : —
+06 livecd      : Reagen
 05 programmer  : Chase
 05 programmer  : Logan
-05 programmer  : Reagen
 04 coder       : Walter
 03 script      : —
 02 terminal    : —
 01 explorer    : Aizeeden
 00 new         : —
-</pre>
-<hr>
-<h2>PATH TO POWER</h2>
+</pre>`;
+
+const scripterLeaderboard = `
+<pre>
+20 scripter root : 0x01
+20 scripter root : 0x02
+19 scripter god  : —
+18 framework god : —
+17 api god       : —
+16 bot god       : —
+15 library god   : —
+14 module god    : —
+13 function god  : —
+12 class god     : —
+11 object god    : —
+10 project god   : —
+09 automator     : —
+08 api master    : —
+07 bot master    : —
+06 library maker : —
+05 programmer    : Chase
+05 programmer    : Logan
+04 coder         : Walter
+03 script        : —
+02 terminal      : —
+01 explorer      : Aizeeden
+00 new           : —
+</pre>`;
+
+// Paths
+const ethicalHackerPath = `
+<h2>PATH TO ETHICAL HACKER</h2>
 <table>
   <tr><th>From → To</th><th>Laptop Path (Windows)</th><th>iPad / iPhone Path</th></tr>
   <tr><td>00→01 new → explorer</td><td colspan="2">Screenshot home + name 5 items</td></tr>
@@ -97,7 +125,35 @@ const site = `
   <tr><td>17→18 metasploit → redteam</td><td>msfvenom payload</td><td>msfvenom in LibTerm</td></tr>
   <tr><td>18→19 redteam → god</td><td colspan="2">Teach 10 people any rank 08+ skill</td></tr>
   <tr><td>19→20 god → root</td><td colspan="2">Invite only — 0x01 / 0x02</td></tr>
-</table>
+</table>`;
+
+const scripterPath = `
+<h2>PATH TO SCRIPTER (20 RANKS — HTML+JS OR PYTHON ACCEPTED)</h2>
+<table>
+  <tr><th>From → To</th><th>Laptop / iPad Proof (HTML+JS or Python)</th></tr>
+  <tr><td>00→01 new → explorer</td><td>Screenshot home + name 5 items</td></tr>
+  <tr><td>01→02 explorer → terminal</td><td>cmd → dir OR Shortcuts app</td></tr>
+  <tr><td>02→03 terminal → script</td><td>.bat OR Shortcut popup "0x0"</td></tr>
+  <tr><td>03→04 script → coder</td><td>.bat opens 3 apps + show IP OR 3-app Shortcut + show IP</td></tr>
+  <tr><td>04→05 coder → programmer</td><td>Real Python script OR HTML+JS interactive page</td></tr>
+  <tr><td>05→06 programmer → automator</td><td>Script/JS automates tasks (timer, file tools)</td></tr>
+  <tr><td>06→07 automator → function master</td><td>Custom functions OR JS DOM manipulation</td></tr>
+  <tr><td>07→08 function master → api user</td><td>Fetch API OR requests in Python</td></tr>
+  <tr><td>08→09 api user → bot builder</td><td>Discord bot OR HTML+JS chatbot</td></tr>
+  <tr><td>09→10 bot builder → library maker</td><td>Reusable module</td></tr>
+  <tr><td>10→11 library maker → class master</td><td>Classes + inheritance</td></tr>
+  <tr><td>11→12 class master → framework builder</td><td>Mini framework/CLI</td></tr>
+  <tr><td>12→13 framework builder → project master</td><td>Full web/Python project</td></tr>
+  <tr><td>13→14 project master → open source</td><td>Publish on GitHub/CodePen</td></tr>
+  <tr><td>14→15 open source → contributor</td><td>Fork + PR or remix</td></tr>
+  <tr><td>15→16 contributor → collaborator</td><td>Team project</td></tr>
+  <tr><td>16→17 collaborator → mentor</td><td>Help others debug</td></tr>
+  <tr><td>17→18 mentor → scripter god</td><td>Teach 10 people ranks 05+</td></tr>
+  <tr><td>18→19 scripter god → scripter root</td><td>Invite only — 0x01 / 0x02</td></tr>
+  <tr><td>19→20 scripter root → legend</td><td>Create new tool used by group</td></tr>
+</table>`;
+
+const commonParts = `
 <hr>
 <h2>VERIFICATION — LIVE ONLY</h2>
 <pre style="font-size:2em;line-height:2.2;text-align:center">
@@ -116,6 +172,37 @@ You are being watched.
 </pre>
 </div>`;
 
+let currentLeaderboard = ethicalHackerLeaderboard;
+let currentPath = ethicalHackerPath;
+
+function showEthicalHacker() {
+  currentLeaderboard = ethicalHackerLeaderboard;
+  currentPath = ethicalHackerPath;
+  updateContent();
+  document.getElementById('btnEthicalHacker').classList.add('active');
+  document.getElementById('btnScripter').classList.remove('active');
+}
+
+function showScripter() {
+  currentLeaderboard = scripterLeaderboard;
+  currentPath = scripterPath;
+  updateContent();
+  document.getElementById('btnScripter').classList.add('active');
+  document.getElementById('btnEthicalHacker').classList.remove('active');
+}
+
+function updateContent() {
+  document.getElementById('content').innerHTML = `
+  <div class="box">
+  <h1>0 x 0<span class="blink">_</span></h1>
+  <h2>20 RANKS TO ROOT</h2>
+  <hr>
+  ${currentLeaderboard}
+  <hr>
+  ${currentPath}
+  ${commonParts}`;
+}
+
 async function unlock() {
   const input = document.getElementById('pass').value;
   const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
@@ -124,9 +211,15 @@ async function unlock() {
 
   if (hashHex === correctHash) {
     document.getElementById('lock').style.display = 'none';
-    document.getElementById('main').innerHTML = site;
+    document.getElementById('main').innerHTML = `
+    <div id="switcher">
+      <button id="btnEthicalHacker" class="active" onclick="showEthicalHacker()">ETHICAL HACKER PATH</button>
+      <button id="btnScripter" onclick="showScripter()">SCRIPTER PATH</button>
+    </div>
+    <div id="content"></div>`;
     document.getElementById('main').style.visibility = 'visible';
     document.getElementById('main').style.opacity = '1';
+    updateContent();
   } else {
     document.getElementById('lock').style.display = 'none';
     document.getElementById('denied').style.display = 'flex';
@@ -140,7 +233,7 @@ document.getElementById('pass').addEventListener('keydown', e => {
 // Matrix rain
 const c=document.getElementById('m'),x=c.getContext('2d');
 c.width=innerWidth;c.height=innerHeight;
-const s='01020304050607080910111213141516171819`@#$%^&*()_+-=[]{}|;:"<>,.?/';
+const s='01020304050607080910111213141516171819`!@#$%^&*()_+-={}[]|:";<>,./';
 const f=16,cols=c.width/f,d=[];
 for(let i=0;i<cols;i++)d[i]=1;
 function r(){
